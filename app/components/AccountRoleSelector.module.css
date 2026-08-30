@@ -1,0 +1,16 @@
+.root { display: grid; gap: 6px; margin: 9px 0; padding: 9px 10px; border: 1px solid #e2e9df; border-radius: 10px; background: #fafcf8; }
+.heading { color: #63736a; font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: .6px; }
+.choices { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.choice { display: grid; justify-items: center; gap: 3px; padding: 8px 5px !important; border: 1px solid #dce6d7; border-radius: 8px; color: #52615a !important; font-size: 11px !important; line-height: 1.15; text-align: center !important; }
+.choice:hover, .active { border-color: #a8c6ad; background: #ecf8ea !important; color: #244d3f !important; }
+.choice span { display: flex; align-items: center; gap: 4px; font-weight: 800; }
+.choice small { color: #77857e; font-size: 9px; font-weight: 600; }
+.skeleton { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.skeleton i { position: relative; display: block; min-height: 49px; overflow: hidden; border: 1px solid #dce6d7; border-radius: 8px; background: #edf1ea; }
+.skeleton i::after { position: absolute; inset: 0; content: ""; background: linear-gradient(100deg, transparent 25%, rgba(255,255,255,.78) 50%, transparent 75%); transform: translateX(-100%); animation: role-skeleton 700ms cubic-bezier(.23,1,.32,1) infinite; }
+@keyframes role-skeleton { to { transform: translateX(100%); } }
+@media (prefers-reduced-motion: reduce) { .skeleton i::after { animation: none; } }
+
+:global(.account-label) { color: #315047; font-size: 12px; font-weight: 800; }
+:global(.profile-pop form) { margin: 2px 0 0; }
+:global(.profile-pop form button) { display: flex; align-items: center; gap: 8px; color: #9a3c32; }

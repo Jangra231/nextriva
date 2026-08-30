@@ -1,0 +1,3 @@
+ALTER TABLE `csrSponsorshipRequests` ADD `capabilityGrantId` int;--> statement-breakpoint
+ALTER TABLE `csrSponsorshipRequests` ADD CONSTRAINT `csrSponsorshipRequests_capabilityGrantId_capabilityGrants_id_fk` FOREIGN KEY (`capabilityGrantId`) REFERENCES `capabilityGrants`(`id`) ON DELETE set null ON UPDATE no action;--> statement-breakpoint
+CREATE INDEX `csr_request_capability_grant_idx` ON `csrSponsorshipRequests` (`capabilityGrantId`,`updatedAt`);

@@ -1,0 +1,8 @@
+import Link from "next/link";
+import { Building2, LockKeyhole } from "lucide-react";
+import { csrLoginAction } from "../../actions";
+
+export default async function CsrLogin({ searchParams }: { searchParams: Promise<{ error?: string; returnTo?: string }> }) {
+  const { error, returnTo } = await searchParams; const destination = returnTo?.startsWith("/") && !returnTo.startsWith("//") ? returnTo : "/csr";
+  return <main className="auth-wrap"><aside className="auth-aside"><Link href="/" className="brand"><span className="brand-mark">F</span><span>fitizen</span></Link><div><span className="eyebrow"><Building2 size={14} /> Corporate social responsibility</span><h1>Fund participation without taking organiser ownership.</h1><p>This workspace is restricted to CSR sponsor accounts created by a Fitizen master administrator.</p></div></aside><section className="auth-panel"><div className="auth-box"><h2>CSR sponsor login</h2><p>Use the dedicated corporate sponsor account issued by the administrator.</p>{error ? <div className="error-note" role="alert">{error}</div> : null}<form action={csrLoginAction} className="form-stack"><input type="hidden" name="returnTo" value={destination} /><label className="form-label">Official email<input className="input" name="email" type="email" required autoComplete="email" /></label><label className="form-label">Password<input className="input" name="password" type="password" required autoComplete="current-password" /></label><button className="btn btn-coral" type="submit"><LockKeyhole size={16} /> Enter CSR dashboard</button></form><p className="fine-print"><Link href="/login">Return to standard sign in</Link></p></div></section></main>;
+}

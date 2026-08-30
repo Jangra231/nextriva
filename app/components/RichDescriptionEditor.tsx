@@ -1,0 +1,3 @@
+export default function RichDescriptionEditor({ initialValue }: { initialValue: string | null }) {
+  return <div className="rich-editor"><label className="sr-only" htmlFor="event-description">Event description</label><textarea id="event-description" className="rich-editor-surface textarea" name="description" defaultValue={initialValue || ""} minLength={20} required placeholder="Write your event description, key highlights, schedule, and attendee guidelines." aria-describedby="event-description-help" /><p id="event-description-help" className="field-note">At least 20 characters. Your description is saved directly with this form before the next step opens.</p></div>;
+}

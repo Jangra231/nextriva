@@ -1,0 +1,392 @@
+# Project TODO
+
+- [x] Define database tables and relations for event categories, events, venues, tickets, registrations, custom questions, follows, and promotion records.
+- [x] Add protected backend procedures for organizer and attendee workflows with ownership checks.
+- [x] Create a public landing page with a hero carousel, event search, city selector, and the required quick filters.
+- [x] Create a public event search/listing page with category filters and date/price filter behavior.
+- [x] Create public event detail pages with event information, ticket choices, and registration entry points.
+- [x] Implement authentication entry points using the provided session-based account system.
+- [x] Create the exact-profile terminology and menu grouping for Organizing Events and Attending Events.
+- [x] Create the organizer dashboard with Live Events, Completed Events, and Drafts tabs.
+- [x] Implement event cards with cover image, title, date range, status badge, and a three-dot actions menu.
+- [x] Build the six-step event creation wizard in the prescribed order: Basics, Location, Description, Cover Image, Tickets and Pricing, Custom Questions.
+- [x] Add Save and Next, Exit, step access control, validation, and draft auto-save behavior to the event wizard.
+- [x] Build the My Registrations attendee dashboard with required stats, race-year timeline, list/grid control, and empty states.
+- [x] Build organizer Reports with event performance indicators.
+- [x] Build Attendees management with event selection, registrant list, and registration status controls.
+- [x] Build Promotions management for organizer promotions and campaign status tracking.
+- [x] Add responsive behavior, accessibility labels, loading states, empty states, and error states across the platform.
+- [x] Write and run Vitest coverage for core data, role, event wizard, and registration workflows.
+- [x] Verify the principal public, organizer, and attendee paths in the running application.
+- [x] Save a final project checkpoint after every completed task is accurately marked in this file.
+- [x] Replace the current React/Express scaffold with a Next.js App Router application while preserving the feature requirements.
+- [x] Rework the data access, protected actions, and validation into Next.js server-side routes or server actions.
+- [x] Add Next.js-compatible unit tests and build validation before delivery.
+- [x] Implement a functional hero banner carousel with slide controls and indicators on the public landing page.
+- [x] Replace the decorative event-card ellipsis with an accessible three-dot action menu for event detail and edit access.
+- [x] Enforce server-side wizard step access and extend draft auto-save to ticket and custom-question steps.
+- [x] Add loading states and complete accessibility coverage for major public, organizer, and attendee workflows.
+- [x] Add Vitest coverage for account guards, event-wizard rules, registration behavior, and core data ownership helpers.
+- [x] Save a final project checkpoint after all checklist items are accurately completed.
+- [x] Add mutation-level server-side guards that reject event-wizard submissions for locked future steps.
+- [x] Strengthen accessibility labels, live error/status announcements, and keyboard support across primary forms and controls.
+- [x] Add tests that exercise account guarding, wizard-step enforcement, and registration eligibility logic used by application code.
+- [x] Save a corrected final project checkpoint after the additional guards, accessibility improvements, and tests are verified.
+- [x] Audit major public, organizer, and attendee interfaces for accessible labeling, status announcements, focus visibility, and keyboard interaction.
+- [x] Save the validated final project checkpoint after the accessibility audit is complete.
+- [x] Complete and document an accessibility audit across public discovery, account, organizer, and attendee flows.
+- [x] Save the final project checkpoint after the accessibility audit evidence and checklist are validated.
+- [x] Audit remaining visible public content and terminology from the authorized live Fitizen website.
+- [x] Expand the About Us page with the authorized live-site message, product purpose, and supporting content sections.
+- [x] Add the missing public content sections and navigation/footer content identified in the live-site audit.
+- [x] Provision a reusable demo login account with organizer and attendee access for user testing.
+- [x] Verify the revised public experience, demo account, and updated About Us page before checkpointing.
+- [x] Fix the Create Event action redirecting an authenticated user back to Login or failing to open the event wizard.
+- [x] Verify the demo account can create and enter a new event draft without losing its session.
+- [x] Compare the current Create Event wizard step-by-step with the authorized live Fitizen workflow and correct any mismatch in controls, order, validation, or progression.
+- [x] Audit live Create Event steps 2–6 individually and document visible controls, labels, validation, and progression behavior.
+- [x] Align and re-verify any remaining Location, Description, Cover Image, Tickets and Pricing, and Custom Questions workflow differences.
+- [x] Prevent invalid autosave identifiers from reaching the event query and surface failed draft saves safely.
+- [x] Individually inspect authorized live Create Event steps 2–6 after unlocking them, documenting fields, labels, validation, and progression.
+- [x] Compare each rebuilt post-Basics step against the live counterpart, implement any remaining mismatch, and re-verify the full flow.
+- [x] Extend Location with address-mode selection, optional BIB/expo date, address-line fields, and venue-not-decided behavior.
+- [x] Upgrade Description to an editor-style required event description with matching formatting controls and guidance.
+- [x] Make Cover Image upload-first with a 1920 × 1080 / 16:9 recommendation and crop-ready workflow messaging.
+- [x] Expand Tickets and Pricing with category, quantity, booking, sale-window, fee-allocation, attendee-message, and validation controls.
+- [x] Expand Custom Questions with Name and Email system questions, question editing controls, and an Activate-style final action.
+- [x] Re-run authenticated Create Event verification after applying the live-step parity implementation.
+- [x] Add and run unit coverage for ticket sale-window validation against the event start time.
+- [x] Implement an actual cover-image crop and apply workflow instead of crop guidance alone.
+- [x] Upgrade Tickets and Pricing with a ticket composer, saved-ticket cards, edit/delete controls, and sale-window-aware draft persistence.
+- [x] Add full Custom Questions management controls, including visible edit/delete behavior and ordering for custom fields.
+- [x] Re-verify and document post-Basics live-workflow parity after resolving the remaining interaction gaps.
+- [x] Document the final verified Cover Image crop, ticket-management, and custom-question parity outcomes in the live workflow audit.
+- [x] Save the final live-workflow checkpoint after reviewing the completed parity documentation and checklist.
+- [x] Reproduce and fix the authenticated Create Event route returning a signed-in user to Login.
+- [x] Add a server-side authenticated draft-creation route with safe return handling for all Create Event entry points.
+- [x] Add GST applicability and GST rate controls to Tickets and Pricing, including persisted ticket pricing logic.
+- [x] Implement drag-and-drop custom-question ordering with keyboard-accessible fallback controls.
+- [x] Add multiple ticket-type management and event-level capacity analytics to the organizer workflow.
+- [x] Re-test every Create Event entry point and the enhanced six-step wizard with the demo account before delivery.
+- [x] Reproduce and correct the remaining user-reported Create Event redirect to Login in the current live rendering path.
+- [x] Re-verify the exact affected Create Event button and authenticated session handoff before checkpointing.
+- [x] Verify the direct wizard no-session fallback preserves Create Event intent and returns through Login to a new draft.
+- [x] Replace the unreliable Create Event button flow with a session-resilient entry experience that does not strand authenticated users at Login.
+- [x] Make the new Create Event draft immediately present a complete, useful first-step form and clear creation guidance instead of appearing blank or unfinished.
+- [x] Verify the repaired button and first creation step in the current preview with the demo session before checkpointing.
+- [x] Trace and repair first-step event save persistence so a created event reloads with its entered details instead of remaining an unsaved-looking draft.
+- [x] Verify a real event creation record saves, reloads, and appears with its entered details in My Events before checkpointing.
+- [x] Open My Events after saving a real draft and verify its saved title, draft status, and editable link are visible.
+- [x] Capture the exact current Create Event request, session, redirect, and save behavior from the live preview before changing implementation again.
+- [x] Replace any confirmed duplicate or fragile Create Event mechanism with one definitive route and persistence path.
+- [x] Independently verify the repaired Create Event workflow from sign-in through saved event details and reload.
+- [x] Consolidate Create Event draft creation and login recovery behind one shared implementation with no duplicate GET draft-creation route.
+- [x] Verify the final explicit button flow end to end: create, save Basics, reload the same event, and confirm the saved values remain.
+- [x] Verify the signed-out Create Event recovery uses that same shared draft-creation implementation.
+- [x] Capture and repair the first-section Save and Next redirect to Login without losing the active event session or draft context.
+- [x] Compare the authorized Fitizen new-event slug and creation progression, then align the rebuilt draft and slug behavior where relevant.
+- [x] Verify a signed-in user can create an event, save Basics, receive a persisted slug, and continue to Location without a Login redirect.
+- [x] Restore category options from the real category data source on the Basics-first Create Event form.
+- [x] Verify a selected category persists with all Basics fields through Save and Next and is visible on the saved event record.
+- [x] Re-audit all visible Basics controls before checkpointing the category repair.
+- [x] Reload the saved event after the category repair and verify title, display name, category, timing, visibility, and timezone all remain visible in Basics.
+- [x] Verify a saved organizer event view visibly reflects the selected category after Save and Next.
+- [x] Explicitly verify the saved Basics category and visibility selections are visibly selected after a full reload.
+- [x] Capture and eliminate the active Save and Next redirect-to-Login path in the current preview session.
+- [x] Verify one complete event advances through all six steps, publishes successfully, and is visible on the homepage.
+- [x] Verify the published event detail page, organizer draft/live status, and homepage listing after the final end-to-end flow.
+- [x] Create a clean downloadable ZIP containing the complete Next.js project, configuration, migrations, and setup documentation.
+- [x] Verify the ZIP contents and attach the archive for download.
+- [x] Add validated organizer banner-image upload and replacement controls to event creation, using stored image URLs on the event record.
+- [x] Add homepage event filters for search, city, category, price, and date plus an accessible sorting control.
+- [x] Add public event sharing controls for native sharing, WhatsApp, Facebook, X, LinkedIn, and copy-link fallback behavior.
+- [x] Verify banner upload persistence, filtered and sorted homepage results, and public share actions in the running application.
+- [x] Replace an event banner through the revised upload interface, save it, reload the wizard, and confirm it persists on the public page.
+- [x] Verify Soonest first, Latest first, and Recently added sorting with at least two live events showing distinct rendered order.
+- [x] Add authenticated Save to Favorites controls to public event pages with persisted bookmarks and clear saved-state feedback.
+- [x] Add accessible loading skeleton animation while homepage discovery filters or sorts are being applied.
+- [x] Add CSV guest-list export to the Attendees dashboard with organizer ownership protection.
+- [x] Add CSV exports and richer event-performance charts to organizer Reports and Attendees.
+- [x] Add organizer email confirmations and attendee reminder notification workflows.
+- [x] Implement the selected Nodemailer delivery service with environment-driven secure SMTP configuration for organizer, registration, and reminder emails; user-supplied credentials remain external workspace configuration.
+- [x] Review the Nodemailer transport and notification-dispatch implementation for environment-only credentials and safe preview fallback behavior.
+- [x] Add automated coverage for SMTP transport selection and organizer publication, attendee registration, and reminder notification dispatch.
+- [x] Provide a safe Nodemailer development preview fallback so email workflows can be tested before SMTP credentials are supplied.
+- [x] Connect paid-ticket registration to a secure payment checkout workflow.
+- [x] Diagnose and fix event-card and event-page image rendering so stored banners display reliably.
+- [x] Defer SMTP credential entry and production attendee-reminder schedule activation to the user's workspace, as explicitly requested; the protected endpoint and SMTP-ready implementation are complete.
+- [x] Verify the scheduled attendee-reminder endpoint implements cron-only authentication, idempotent reminder delivery, and structured error handling.
+- [x] Add automated coverage for scheduled reminder authentication and no-op delivery behavior before deployment activation is deferred to the user workspace.
+- [x] Add an atomic reminder-delivery claim so concurrent or retried schedule requests cannot send duplicate attendee emails.
+- [x] Add retry-safe post-send reminder persistence so a database failure after email delivery cannot cause a duplicate on retry.
+- [x] Add an automated partial-failure reminder test and rerun the final production build after reminder hardening.
+- [x] Add an attendee status-distribution visualization alongside the guest-list CSV export.
+- [x] Handle cancelled, expired, and failed Stripe Checkout sessions so abandoned payments do not remain as unresolved ticket registrations.
+- [x] Prevent orphan pending registrations when Stripe Checkout session creation fails and verify the paid-ticket lifecycle edge cases.
+- [x] Simulate Stripe Checkout session creation failure and verify pending registration cleanup.
+- [x] Add automated coverage for checkout session expiry and async payment failure transitions.
+- [x] Replace public paid-ticket Stripe checkout with organizer-configured manual bank-account and UPI payment instructions.
+- [x] Add an organizer payment setup section that securely saves per-event bank account and UPI payment details.
+- [x] Show the selected manual payment method and amount to attendees during paid-event registration, with payment-pending status and organizer confirmation controls.
+- [x] Remove obsolete Stripe checkout controls, routes, and payment-specific UI from the public registration flow.
+- [x] Verify the full organizer setup and attendee manual-payment registration workflow with automated and browser checks.
+- [x] Verify organizer confirmation changes a pending manual-payment registration to paid and sends the confirmation notification.
+- [x] Add automated coverage for manual paid registration creation and organizer payment confirmation, including pending-to-paid transitions and notification guards.
+- [x] Browser-verify the bank-transfer instruction path alongside the verified UPI path.
+- [x] Add database-backed automated tests that a paid manual registration persists its reference as pending and sends no confirmation before organizer approval.
+- [x] Add database-backed automated tests that organizer approval transitions the registration to paid, timestamps confirmation delivery, and updates attendee-visible payment state.
+- [x] Repair the organizer Attendees dashboard layout across desktop and mobile viewports.
+- [x] Make the organizer-controlled manual payment status and confirmation action explicit in the attendee management table.
+- [x] Provision a separate participant demo account and document its registration testing credentials.
+- [x] Verify the independent participant registration, organizer payment confirmation, and attendee wallet status end to end.
+- [x] Redesign paid registration so a booking ID is created before payment instructions and transaction-reference submission are requested.
+- [x] Add participant payment-proof image upload with safe storage validation and attendee-visible upload status.
+- [x] Add organizer payment rejection with a required explanatory note and attendee-visible rejection guidance.
+- [x] Add Attendees search plus payment-status and attendance-status filtering controls.
+- [x] Verify booking-first registration, proof upload, organizer approval or rejection, wallet messaging, and attendee filtering end to end.
+- [x] Create and validate a downloadable ZIP archive of the latest verified project version.
+- [x] Add an authenticated View and Edit Profile page with participant and organizer account details.
+- [x] Add an authenticated Following page that shows each user's saved events.
+- [x] Generate and persist a stable unique public user ID for every account and show it in profile data.
+- [x] Generate and persist a unique registration ID for every event booking, alongside the existing booking number.
+- [x] Ensure stable user and registration identifiers are used consistently in event creation, registrations, ownership checks, and account views.
+- [x] Verify profile editing, following, identifier persistence, event creation, and event registration end to end.
+- [x] Add secure profile avatar upload, storage validation, persistence, and profile presentation.
+- [x] Generate a QR ticket for each event registration using its unique registration ID.
+- [x] Add organizer registration-ID lookup and QR-scanner check-in controls with duplicate-check-in protection.
+- [x] Verify avatar upload, QR ticket display, registration-ID lookup, and organizer check-in end to end.
+- [x] Add structured attendee and registration details to each QR ticket payload while preserving secure organizer validation.
+- [x] Show verified attendee name, user ID, registration ID, ticket, and event details in the organizer check-in outcome.
+- [x] Verify enriched QR payload parsing and organizer check-in detail presentation end to end.
+- [x] Add an event-level registration QR code in event creation, visually paired with the event cover image.
+- [x] Display the event registration QR code on every public event page.
+- [x] Route event QR scans to an authenticated registration landing flow, preserving the event intent through login.
+- [x] Detect existing registrations in the QR landing flow and show a clear already-registered message instead of duplicating a booking.
+- [x] Verify event QR generation, scan landing, login recovery, new registration, and already-registered messaging end to end.
+- [x] Remove participant-specific QR tickets, QR payload detail rendering, and organizer QR ticket check-in controls.
+- [x] Add high-quality downloadable event QR poster generation for organizers.
+- [x] Add QR-specific sharing controls for the event registration link.
+- [x] Integrate the event registration QR visibly within the public event cover banner.
+- [x] Verify QR poster download, QR sharing, banner integration, registration routing, and duplicate messaging end to end.
+- [x] Create and validate a fresh downloadable ZIP containing the latest working project version.
+- [x] Add organizer-facing event sharing for the event page and registration QR across supported social platforms.
+- [x] Add organizer QR poster/link sharing controls inside organizer event management.
+- [x] Add an account-menu role selector that lets a signed-in user switch between organizer and participant views without re-authentication.
+- [x] Verify organizer event/QR sharing and participant/organizer role navigation end to end.
+- [x] Add a smooth, accessible loading skeleton transition when switching account views.
+- [x] Route the Participant account-view selection to the public homepage rather than the booking dashboard.
+- [x] Expose a clear organizer CSV export action for registered participants on event management cards.
+- [x] Add dynamic live-event registration-status badges for Filling Fast and Sold Out states.
+- [x] Verify role routing and transition feedback, participant CSV export, and registration-status badges end to end.
+- [x] Display exact remaining event capacity on public live-event cards.
+- [x] Add a persisted organizer-configurable Filling Fast threshold for each event.
+- [x] Add organizer controls for choosing participant CSV export columns.
+- [x] Verify remaining-capacity labels, threshold persistence, and custom CSV output end to end.
+- [x] Diagnose and fix the event-level QR code failing to load.
+- [x] Verify QR rendering on public event pages and organizer creation views, including registration routing.
+- [x] Add a prominent direct QR image download action beside event QR codes.
+- [x] Make QR sharing visibly available with a dependable copy-link fallback.
+- [x] Verify QR image download and share behavior in public and organizer QR views.
+- [x] Make the QR poster download visible and available without client-side generation delay.
+- [x] Verify the QR poster download target in public and organizer views.
+- [x] Refine the QR image-download layout for clean public and organizer presentation.
+- [x] Remove preview-host details from the generated QR poster text.
+- [x] Verify the updated QR layout and sanitized poster output in both views.
+- [x] Rebuild the event-header QR card as a full-width registration section with side-by-side scan guidance and QR image.
+- [x] Align QR image, poster, WhatsApp, and copy actions into an interactive action row below the QR content.
+- [x] Verify the responsive public and organizer QR layouts plus all action targets.
+- [x] Package and validate a final ZIP containing the corrected Next.js project.
+- [x] Add secure, non-destructive administrator authorization without modifying existing platform data.
+- [x] Build protected administrator oversight for users, events, registrations, payments, and reports using read-safe views.
+- [x] Verify administrator access controls and existing data preservation end to end.
+- [x] Fix logout so every signed-in account returns to the logged-out public homepage.
+- [x] Restore profile, view-switching, and logout controls in the participant workspace account menu.
+- [x] Verify account-menu parity and logout behavior for organizer and participant views.
+- [x] Expand administrator permissions into a guarded master-access workspace with audit safeguards and explicit confirmation for data-changing actions.
+- [x] Add advanced administrator reports spanning users, events, registrations, payments, tickets, and promotions.
+- [x] Add protected administrator report downloads in XLSX and PDF formats.
+- [x] Verify master controls, report accuracy, and download output while preserving existing records.
+- [x] Add an approval-first event publishing lifecycle that routes organizer submissions to the administrator before events can become live.
+- [x] Add guarded administrator moderation controls to approve, freeze, suspend, reject with organizer guidance, or delete events, with every action audited.
+- [x] Add organizer-facing submission, rejection-feedback, and resubmission states without modifying existing event records.
+- [x] Add persisted per-event platform-fee configuration and ensure the fee is reflected in ticket/registration reporting.
+- [x] Upgrade administrator reports with interactive visual analytics, weekly activity, and platform-fee metrics.
+- [x] Verify the moderation workflow, fee calculations, report interactions, exports, tests, and production build while preserving existing records.
+- [x] Automatically create an idempotent first-participant registration for an organizer when the administrator approves the organizer’s event.
+- [x] Generate and persist the organizer participation ID, booking details, ticket assignment, and participant-visible event record without duplicating existing registrations.
+- [x] Present the organizer’s generated participation details in the organizer event workflow and verify the approved-event, duplicate-guard, tests, and production build.
+- [x] Add a clear Organizer badge to the organizer’s auto-participant row in attendee management.
+- [x] Include organizer participation identity and generated registration details in protected attendee CSV exports.
+- [x] Send an organizer participation-details email after administrator approval, with safe delivery safeguards and automated coverage.
+- [x] Verify organizer badges, CSV output, notification content, tests, and production build without altering existing platform records.
+- [x] Audit public user-ID and registration-ID generation, storage constraints, and current-record uniqueness without altering existing data; the registration-ID approach was superseded by the requested user-ID/event-ID model.
+- [x] Harden account and event identifier allocation against collisions across organizer and participant flows; no new registration-specific IDs are created.
+- [x] Verify unique identifiers through automated coverage, database checks, and production build validation.
+- [x] Add a unique permanent event ID for every event while preserving existing events and user IDs.
+- [x] Replace participant-facing registration-ID usage with event-ID and user-ID participation verification, without creating new registration-specific IDs.
+- [x] Update organizer details, attendee lists, CSV exports, administrator exports, and approval emails to present user ID and event ID as the verification pair.
+- [x] Verify user-ID/event-ID uniqueness, participation lookups, existing-data preservation, tests, and production build.
+- [x] Add a non-destructive administrator-managed location directory with zone, ward, location, venue, GPS coordinates, and indoor/outdoor details.
+- [x] Add guarded administrator controls to create, update, activate, and retire approved venue records with audit logging.
+- [x] Let organizers choose an approved venue directory record or enter a detailed manual address with sector, area, venue, and coordinates.
+- [x] Add map-assisted current-location capture and coordinate validation for precise manual venue details.
+- [x] Show clear exact location information on organizer and public event views without changing existing event records.
+- [x] Verify location management, selection, geolocation, data preservation, tests, and production build.
+- [x] Add non-destructive capacity and accessibility details to approved venue records and event location snapshots.
+- [x] Add a guarded administrator bulk CSV venue importer with format validation, row-level error reporting, audit logging, and duplicate-safe persistence.
+- [x] Add an interactive organizer map with a draggable pin that updates the manual latitude and longitude fields.
+- [x] Show venue capacity and accessibility details clearly where organizers and participants need them.
+- [x] Verify CSV import, map pin adjustment, venue detail persistence, data preservation, tests, and production build.
+- [x] Improve the administrator overview with actionable approval, venue, participant, payment, revenue, and recent-activity data at a glance.
+- [x] Verify overview metrics and operational queues against live platform data without modifying existing records.
+- [x] Add organizer venue search and filters for zone, ward, capacity, accessibility, and matching venue text.
+- [x] Add a protected administrator CSV export for the complete venue directory with capacity and accessibility fields.
+- [x] Display clear venue capacity and accessibility indicators on public event cards.
+- [x] Verify venue filtering, directory CSV export, public indicators, tests, and production build without changing existing records.
+- [x] Add organizer venue radius search using coordinates and selectable distance limits without changing approved venue records.
+- [x] Persist organizer-owned venue filter presets with safe create, apply, and delete controls.
+- [x] Add a public accessible-venues-only filter to upcoming event discovery.
+- [x] Verify radius calculations, organizer preset ownership, accessible public discovery, tests, and production build without changing existing records.
+- [x] Prevent the same approved venue from being assigned to overlapping active events until the existing event is completed.
+- [x] Add interactive organizer venue availability feedback with conflicting event timing details before location save.
+- [x] Diagnose and repair the organizer map pin configuration and rendering workflow without requesting a user API key.
+- [x] Verify venue conflict protection, interactive availability states, map behavior, tests, and production build without changing existing records.
+- [x] Add a guarded organizer completion action so completed events release their approved venue for future bookings.
+- [x] Make the organizer approved-venue directory dropdown full width and retain a clear manual-location fallback when no exact venue exists.
+- [x] Add three clearly labeled, controlled sample approved venues for organizer-flow verification without modifying existing venue records.
+- [x] Add a MASTER-confirmed, audited administrator override to release a venue reservation in exceptional circumstances.
+- [x] Add a venue booking calendar view that shows reserved and available periods for each approved venue.
+- [x] Add in-app organizer notifications when a previously reserved venue becomes available.
+- [x] Verify picker behavior, sample data isolation, release audit, calendar, notifications, tests, and production build without modifying existing records.
+- [x] Inspect and correct the actual organizer Create Event venue-step layout so the directory picker is clearly visible and usable.
+- [x] Prepare a clean, portable source ZIP without dependencies, build output, runtime logs, or secrets.
+- [x] Add a step-by-step setup guide covering environment variables, database migration, seed data, development, and production build.
+- [x] Verify the corrected Create Event venue step, source archive contents, setup guide, tests, and production build.
+- [x] Make the approved venue selector immediately visible in the Create Event location step without requiring a hidden branch or secondary interaction.
+- [x] Repair manual-location map loading and provide a clear working fallback when the map proxy is unavailable.
+- [x] Verify the rendered organizer venue selector and map experience in the browser without changing existing records.
+- [x] Verify the corrected venue and map flows with TypeScript, tests, and production build.
+- [x] Show the full approved-venue dropdown only after organizers click Browse approved venue directory, then verify the rendered click flow.
+- [x] Add selected-venue visual date and time-slot availability below the approved venue dropdown.
+- [x] Add organizer venue approval requests with administrator MASTER-confirmed approve, request-changes, and reject review actions plus audit logging.
+- [x] Verify directory click flow, availability slots, venue request review workflow, tests, and production build without modifying existing records.
+- [x] Define the bounded MCD public-health authority role, administrator-only provisioning controls, and event lifecycle review scope.
+- [x] Add secure MCD authentication, role guards, and an isolated demo MCD account without modifying existing user records.
+- [x] Build an MCD monitoring dashboard from existing events, approved venues, participation, organizer, partner-promotion, and available health-screening data.
+- [x] Add ward, zone, and city reporting views plus clearly labelled deferred capability placeholders for unimplemented data domains.
+- [x] Verify administrator provisioning, MCD bounded authority access, tests, and a production build without changing existing platform data.
+- [x] Define the administrator-provisioned CSR corporate sponsor role and ensure sponsorship remains distinct from event organisation.
+- [x] Add CSR company profiles, budgets, scoped ward/zone/activity/location/agency sponsorship selections, and audited sponsorship approval records.
+- [x] Build a secure CSR sponsor dashboard for funded events, participation, impact indicators, and protected CSR reports.
+- [x] Provision an isolated CSR demo account through the administrator workflow and verify that it cannot access organizer or master-administrator controls.
+- [x] Validate the CSR funding lifecycle, existing-data preservation, tests, and production build, while documenting deferred finance and implementation-agency scope.
+- [x] Complete existing-event CSR sponsorship selection with explicit eligible-event availability and clear draft/submission states.
+- [x] Require sequential MCD review followed by MASTER administrator approval before a CSR sponsorship becomes an approved funding commitment.
+- [x] Audit MCD and master sponsorship decisions, preserve event-organizer ownership, and surface decision status and guidance in the CSR workspace.
+- [x] Remove legacy Vite-only source files from the deliverable and create a clean Next.js-only source ZIP excluding dependencies, build artifacts, logs, local secrets, and Manus metadata.
+- [x] Verify the sequential CSR sponsorship flow with isolated data, tests, production build, and archive inspection without changing existing platform records.
+- [x] Remove implementation-agency selection, persistence requirements, and agency-management controls from the CSR sponsorship lifecycle without altering existing sponsorship records.
+- [x] Add two CSR sponsorship routes: sponsor a matched existing event or submit a new/future-event sponsorship brief for administrator review.
+- [x] Capture CSR sponsorship brief details including event type, intended audience, city/zone/ward preference, preferred schedule, proposed amount, capacity, accessibility needs, and success indicators.
+- [x] Add administrator approve, reject-with-required-reason, request-additions, resubmission, and event-matching controls with audited decision records.
+- [x] Restrict CSR dashboards, impact data, and reports to events explicitly assigned to that sponsor; do not expose every platform event.
+- [x] Verify the redesigned CSR request, review, match, rejection, resubmission, privacy, tests, production build, and fresh Next.js-only ZIP without changing existing data.
+- [x] Enhance workflow status badges with clear semantic labels, contextual icons, and accessible visual hierarchy without altering workflow records.
+- [x] Add responsive hover, focus, and active feedback to workflow cards, tables, controls, and actionable navigation.
+- [x] Add reduced-motion-safe loading feedback for workflow submissions, route changes, and data-rich dashboard sections.
+- [x] Verify visual refinements in the browser, run automated checks, and provide a fresh clean Next.js-only source ZIP without changing existing data.
+- [x] Extract every staged requirement from `Staged_Next.pdf` and map it to the existing Fitizen platform without changing current data.
+- [x] Produce stage-specific acceptance criteria, dependencies, data-preservation controls, and buttery-smooth validation checks before implementation begins.
+- [x] Implement only the first approved stage, complete functional, browser, test, and build validation, and provide a checkpoint and fresh clean Next.js-only ZIP before advancing.
+- [x] Stage 0: Inventory the active Next.js architecture, authentication/session model, roles, identifiers, data schema, migrations, routes, guards, workflows, commands, and compatibility-sensitive surfaces without modifying production data.
+- [x] Stage 0: Document a database backup/export approach and reversible rollback plan for terminology, account-model, capability, authorization, and route migrations.
+- [x] Stage 0: Produce the repository-specific migration baseline, verify the documentation-only change, and deliver a checkpoint and fresh clean Next.js-only ZIP before beginning Stage 1.
+- [x] Stage 1: Inventory and classify every user-facing and backend MCD/BMC reference, legacy role value, route, report, seed, and authorization guard without changing production data.
+- [x] Stage 1: Add `LOCAL_AUTHORITY` terminology compatibility while preserving the existing `mcd` data value, historic audit records, and working authority routes through safe redirects or aliases.
+- [x] Stage 1: Replace active user-facing MCD/BMC wording with Local Authority across labels, menus, login, dashboards, reports, notifications, validation, and setup documentation without removing compatibility routes.
+- [x] Stage 1: Add idempotent compatibility tests proving legacy MCD/BMC values resolve correctly, existing records remain readable, user-facing labels are Local Authority, and authority event/report flows still work.
+- [x] Stage 1: Run browser, type, test, production-build, archive, rollback-documentation, and checkpoint validation before beginning Stage 2.
+- [x] Stage 2: Inventory the staged document’s explicit profile terminology, account-capability, and route-migration requirements against current user and authority data without altering existing records.
+- [x] Stage 2: Add additive user-profile terminology and account-capability models with backfilled compatibility mappings that preserve current `users.role`, public IDs, credentials, sessions, and audit history.
+- [x] Stage 2: Add guarded profile/capability route-migration feature flags, compatibility redirects, and rollback-safe configuration documentation without disabling current working routes.
+- [x] Stage 2: Add smooth, reduced-motion-safe loading states, hover feedback, focus treatment, and pending-action feedback to Local Authority workflow controls without changing workflow data.
+- [x] Stage 2: Add migration, profile, capability, flag, Local Authority UI, and legacy-access regression coverage; then complete browser, full-suite, build, archive, rollback, and checkpoint validation before Stage 3.
+- [x] Stage 3: Inventory the staged capability catalog, application, grant, scope, selected-function, date, status, search/filter, and audit requirements without changing legacy access.
+- [x] Stage 3: Add an additive capability catalog with capability and function codes, descriptions, audiences, active-state metadata, required/optional functions, dependency codes, and sensitive-data declarations; seed it idempotently without modifying existing user or event data.
+- [x] Stage 3: Add capability applications with draft, submitted, returned, approved, rejected, cancelled, and expired states; support validated applicant requests, selected functions, requested territory scope, and resubmission evidence.
+- [x] Stage 3: Add time-bound scoped capability grants with selected functions, active/suspended/revoked/expired states, administrative reason, audit records, active-status indicators, and transactional lifecycle writes while keeping future authorization enforcement deferred to Stage 4.
+- [x] Stage 3: Build searchable/filterable catalog and grant-management UI plus smooth application validation/submission feedback without exposing a capability workspace until Stage 4 authorization is ready.
+- [x] Stage 3: Add lifecycle, scope, dates, audit, search/filter, compatibility, and UI regression coverage; complete browser, full-suite, build, rollback documentation, and checkpoint validation before Stage 4.
+- [x] Stage 4: Inventory Local Authority execution functions and legacy protected paths; define a centralized grant-authorization decision contract with a compatibility-first rollout and rollback flag.
+- [x] Stage 4: Enforce active time-bound Local Authority grants, selected functions, and scopes on the first migrated execution path while preserving current legacy authority behavior when the rollout flag is disabled.
+- [x] Stage 4: Add guarded, auditable grant-expiry operations and advanced catalog filters/sorting; validate browser flows, authorization boundaries, legacy regression, build, rollback, archive, and checkpoint evidence.
+- [x] Stage 5: Inventory Local Authority MIS export, CSR execution actions, grant-alert data needs, and responsive layout seams; document a selective compatibility-first rollout and rollback plan.
+- [x] Stage 5: Extend centralized authorization to Local Authority MIS export and selected CSR functions behind explicit rollout controls while preserving retained role-based workflows when disabled.
+- [x] Stage 5: Add grant-expiry alert/reminder widgets, resolve responsive spacing/overlap issues, and validate browser, authorization, alert, regression, build, rollback, archive, and checkpoint evidence.
+- [x] Stage 6: Reconcile the document-defined administrator approval gate with the existing Stage 3–5 selective-function, scope, date, reason, audit, and rollback controls; identify any missing notification behavior without changing legacy access.
+- [x] Stage 6: Add audited, owner-scoped application/grant decision notifications and any minimal administrator lifecycle controls still needed for the Stage 6 acceptance gate.
+- [x] Stage 6: Validate fewer-than-requested function grants, notification visibility, audit/compatibility behavior, browser layout, full regression, build, rollback documentation, archive, and checkpoint evidence before Stage 7.
+- [x] Stage 6 enhancement: Add owner-scoped outcome filtering, safe bulk mark-read actions, unread badges, and reduced-motion-safe decision inbox transitions without altering applications, grants, or audit evidence.
+- [x] Stage 7: Inventory and implement a server-validated workspace switcher that exposes only active, selected-function, time-valid capability workspaces; preserve legacy workspaces and add a rollback flag.
+- [x] Stage 7: Validate direct-route/context isolation, inbox bulk actions, unread states, responsive layouts, tests, build, rollback documentation, clean archive, and checkpoint evidence.
+- [x] Add user-configurable workspace landing preferences that safely select a default eligible workspace on sign-in without persisting or following an invalid, expired, suspended, foreign, or legacy-derived workspace.
+- [x] Add administrator grant-usage reporting for active/scheduled/expired/suspended grants, selected-function scope, recent workspace activity evidence, and safe permission-management links without changing grant authorization rules.
+- [x] Add owner-scoped, workspace-specific read-only activity summaries that expose only authorized recent capability records and preserve existing application, grant, audit, and legacy-workflow data.
+- [x] Stage 8: Inventory, implement, validate, document, archive, and checkpoint the document-defined Stage 8 requirements only after the requested workspace enhancements are complete.
+- [x] Add administrator-downloadable CSR grant-usage exports that use the existing server-derived report data and preserve sensitive participant/legacy CSR boundaries.
+- [x] Add owner-scoped upcoming-grant-expiry alerts for saved capability-default preferences, with safe fallback behavior and no background scheduler or authorization change.
+- [x] Add a responsive administrator assignment timeline that visualizes audited Stage 8 event-or-concept assignment history without exposing unrelated user data.
+- [x] Stage 9: Inventory, implement, validate, document, archive, and checkpoint the document-defined Stage 9 requirements only after the requested administration enhancements are complete.
+- [x] Add Stage 10 consented participant-owned history records with explicit withdrawal, owner-only viewing/editing, and no authority access to individual health fields.
+- [x] Add category-aware post-registration forms that appear only for supported event categories, support a single completed entry for single-day events, and daily entries for multi-day events without inferring clinical data.
+- [x] Add aggregate-only authority analytics charts for scoped workspace activity and grant usage, excluding participant identity, individual health fields, and other sensitive data.
+- [x] Add both in-app and daily automated approval reminder code for expiring authority grants, using documented idempotent recipient-only notices without changing authorization or auto-renewing grants.
+- [x] Repair and verify interactive homepage filtering plus hero-carousel movement, controls, loading feedback, and responsive layout.
+- [x] Activate the approved daily automated authority-grant reminder schedule after the Stage 10 checkpoint is published.
+- [x] Stage 10: Inventory, implement, validate, document, archive, and checkpoint the document-defined Stage 10 requirements only after all requested participant, authority, reminder, and homepage repairs are complete.
+- [x] Diagnose and repair the homepage quick-filter interactions using live browser behavior, query-state verification, and responsive validation.
+- [x] Diagnose and repair the Events across India hero side-show/carousel using live browser behavior, controls, timing, reduced-motion, and responsive validation.
+- [x] Perform a deeper document-to-implementation audit for all completed migration stages, record confirmed omissions only, and remediate any gaps that are still within the current staged scope.
+- [x] Add additive role-specific CSR, Local Authority, District-Level, and State-Level capability-application details with secure owner-scoped supporting-document references, preserving generic applications and historic records.
+- [x] Add server-backed administrator capability-application review filters for status, capability, applicant, geography, and requested date without weakening MASTER decision safeguards.
+- [x] Repair the event-creation Description step so Save and Next persists written content, retains it after reload, and advances to the correct next step without returning to the same page.
+- [x] Repair the event-creation banner upload so a valid organizer-selected image persists and renders on the event record without losing the wizard flow.
+- [x] Gate event registration QR generation, display, sharing, and download behind administrator approval while preserving approved-event QR routing and existing event data.
+- [x] Repair homepage filter and hero carousel navigation so query-backed results and banner state update smoothly without a visible full-page refresh.
+- [x] Add an accessible drag-and-drop event-banner upload surface with immediate client-side preview, native file-picker fallback, and the existing secure server-side validation path.
+- [x] Add an organizer-visible event approval timeline that derives submission, review, requested-changes, approval, rejection, freeze, and suspension state from existing moderation evidence without weakening administrator safeguards.
+- [x] Repair the ticket-type selection panel and price-entry controls so organizers can select each supported type and enter/save valid paid-ticket pricing.
+- [x] Restore a working crop-capable event-banner upload with preview while preserving native multipart submission and server-side image validation.
+- [x] Complete an end-to-end Create Event audit across all six steps, verifying saved state, step progression, image upload, tickets, pricing, and final submission.
+- [x] Preserve the existing selected-venue calendar and time layout while marking reserved event dates/times red and available dates/times green from the same server-backed reservation data as conflict warnings.
+- [x] Repair live selected-venue reservation loading so its calendar shows server-backed reserved and available dates/times immediately before any form submission.
+- [x] Keep the existing venue calendar layout with reserved timeline cells red only, without adding a separate reserved-spots section.
+- [x] Suggest the next available time slot when the organizer-selected date has no available venue time windows.
+- [x] Display a compact owner-visible list of upcoming reservations for the selected approved venue without exposing unrelated participant data.
+- [x] Exclude organizer draft events from all participant-facing account and registration views while preserving organizer draft access.
+- [x] Remove all four verified participant demo account Noida 10KM Run drafts and their dependent draft-only records after reconfirming their ownership and draft state.
+- [x] Repair the Create Event ticket payment-type selector so Paid, Free, and Donation are mutually exclusive, clickable, and correctly enable their pricing fields.
+- [x] Reproduce and repair the ticket payment-type selection in the actual authenticated organizer wizard, including a real browser-flow verification that Paid enables pricing and Free no longer remains selected.
+- [x] Make the related manual-payment fields usable without client hydration so an organizer can complete a paid-ticket save in the same real wizard flow.
+- [x] Correct the ticket sale-window defaults so the end time is strictly before the event start and a newly selected paid ticket can save without manual date repair.
+- [x] Add a clear organizer-facing entry point to request CSR, Local Authority, and other eligible capability workspaces through the existing approval workflow.
+- [x] Disable the GST-rate control when GST is No, add a 0% GST rate option, and ensure only applicable tax inputs are submitted for a ticket.
+- [x] Make manual-payment details show exactly the selected UPI, Bank Transfer, or Both method without requiring client hydration.
+- [x] Add a detailed buyer checkout price breakdown covering ticket price, applicable GST, platform/processing fees, and the payable total.
+- [x] Audit the staged implementation against database preservation evidence and report any existing-record changes separately from additive schema and intentionally created data.
+- [x] Generate a guarded downloadable PDF tax invoice for each successful paid registration, using stored transaction and event data without fabricating tax identifiers.
+- [x] Add an administrator-only settings page for dynamically configuring gateway-fee rates with MASTER confirmation and immutable audit evidence.
+- [x] Apply configured gateway-fee rates to future buyer checkout calculations without changing historic registrations or organizer-owned event records.
+- [x] Add an administrator data-audit dashboard for transaction lifecycle activity and user role changes, with filters and read-only evidence views.
+- [x] Audit and remove non-submit loading, filter, carousel, and single-page movement animations while retaining brief feedback only for form submissions and task completion.
+- [x] Replace all visible Fitizen and source-identity references with a distinct made-up product name, including titles, email copy, PDFs, QR/poster text, identifiers, and documentation.
+- [x] Remove obsolete Vite files, packages, scripts, configuration, and references while preserving a working Next.js-only application.
+- [x] Deeply validate the public discovery, authentication, organizer, participant, administrator, authority, CSR, payment, venue, export, QR, and capability workflows after the rebrand.
+- [x] Create and inspect a clean downloadable Next.js source ZIP that excludes dependencies, build output, logs, secrets, and obsolete artifacts.
+- [x] Repair the organizer Create Event custom-question Add Question control using the actual wizard interaction without modifying any existing event records.
+- [x] Perform a non-mutating audit of primary organizer Create Event controls and repair only confirmed broken controls without changing existing data.
+- [x] Diagnose and repair displayed capability workspaces that are non-functional while preserving existing data, role values, layouts, and legacy workflows.
+- [x] Validate the repaired capability execution paths with read-only checks and regression coverage without modifying existing records.
+
+- [x] Diagnose and repair the homepage event-list database query failure without changing existing data, layouts, roles, or legacy workflows.
+- [x] Validate homepage rendering, query behavior, regression coverage, and data preservation after the repair.

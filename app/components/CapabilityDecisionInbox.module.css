@@ -1,0 +1,18 @@
+.inbox{display:grid;gap:14px;margin:0 0 18px;border-color:#bedccc;background:linear-gradient(135deg,#f4fbf4,#fffdf9)}
+.badge{display:inline-grid;place-items:center;min-width:18px;height:18px;padding:0 5px;border-radius:999px;background:#d75743;color:#fff;font-size:11px;font-weight:900;line-height:1}
+.controls{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.filterForm{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.filterForm label{display:flex;align-items:center;gap:7px;min-width:0}.filterForm select{min-width:180px}
+.list{display:grid;gap:10px}
+.item{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;min-width:0;padding:13px;border:1px solid #dbe8dd;border-radius:12px;background:#fff}.read{opacity:.72}.unreadDot{width:7px;height:7px;border-radius:999px;background:#d75743;flex:0 0 auto}.readLabel{color:#557664;font-size:13px;font-weight:800}
+.copy{display:grid;gap:5px;min-width:0}
+.copy span{display:flex;align-items:center;gap:7px;min-width:0;color:#184c3d}
+.copy span b{overflow-wrap:anywhere}
+.copy p{margin:0;color:var(--muted);line-height:1.45;overflow-wrap:anywhere}
+.copy small{color:var(--muted)}
+.actions{display:flex;flex:0 0 auto;align-items:center;gap:8px}
+.markRead{border:0;background:transparent;color:#486a58;font:inherit;font-size:13px;font-weight:800;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
+.markRead:focus-visible{outline:3px solid rgba(240,97,72,.35);outline-offset:3px;border-radius:3px}
+ .empty{margin:0;padding:14px;border:1px dashed #b7cdbd;border-radius:10px;color:var(--muted);background:rgba(255,255,255,.68)}
+@media (prefers-reduced-motion:no-preference){.item{animation:decision-inbox-enter 180ms cubic-bezier(.23,1,.32,1) both}.item:nth-child(2){animation-delay:35ms}.item:nth-child(3){animation-delay:70ms}.item:nth-child(n+4){animation-delay:105ms}@keyframes decision-inbox-enter{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}}
+@media (max-width:700px){.inbox{margin-bottom:14px}.controls{align-items:stretch}.filterForm{flex:1}.filterForm label{flex:1}.filterForm select{width:100%}.item{flex-direction:column}.actions{width:100%;flex-wrap:wrap}.actions .btn{flex:1;min-width:150px}.markRead{padding:9px 2px}}
+@media (max-width:420px){.item{padding:11px}.actions{align-items:stretch;flex-direction:column}.actions .btn{width:100%}}

@@ -1,0 +1,8 @@
+import Link from "next/link";
+import { LockKeyhole, ShieldCheck } from "lucide-react";
+import { adminLoginAction } from "../../actions";
+
+export default async function AdminLogin({ searchParams }: { searchParams: Promise<{ error?: string; returnTo?: string }> }) {
+  const { error, returnTo } = await searchParams; const destination = returnTo?.startsWith("/") && !returnTo.startsWith("//") ? returnTo : "/admin";
+  return <main className="auth-wrap"><aside className="auth-aside"><Link href="/" className="brand"><span className="brand-mark">F</span><span>fitizen</span></Link><div><span className="eyebrow"><ShieldCheck size={14} /> Secure administration</span><h1>Manage the platform with care.</h1><p>This area is restricted to trusted Fitizen administrators. Existing platform records remain preserved.</p></div></aside><section className="auth-panel"><div className="auth-box"><h2>Administrator login</h2><p>Use your dedicated administrator credentials.</p>{error ? <div className="error-note" role="alert">{error}</div> : null}<form action={adminLoginAction} className="form-stack"><input type="hidden" name="returnTo" value={destination} /><label className="form-label">Administrator email<input className="input" name="email" type="email" required autoComplete="email" /></label><label className="form-label">Password<input className="input" name="password" type="password" required autoComplete="current-password" /></label><button className="btn btn-coral" type="submit"><LockKeyhole size={16} /> Enter administrator console</button></form><p className="fine-print"><Link href="/login">Return to standard sign in</Link></p></div></section></main>;
+}

@@ -1,0 +1,668 @@
+Staged Next.js Migration Prompts
+
+Centralised Two-Account Portal with Working Capabilities
+Use these prompts one stage at a time with your AI coding assistant. Do not give all stages
+in one message. Complete the acceptance checklist for one stage, commit the changes, and
+only then start the next stage.
+The goal is to migrate the existing Next.js website from separate user types and user IDs to
+two account types while keeping the existing workflows working.
+   Important: The CSR workflow must not be simplified away. An approved CSR capability
+   must be fully operational and must allow the User to submit new sponsorship requests,
+   receive Administrator review, receive an Administrator-assigned event, view only that
+   assigned event, view limited participant data, track funding and impact, and repeat the
+   process for additional events with separate approval each time.
+
+Final target model
+The application must contain only these account types:
+ Account type                                  Meaning
+                                               Central Administrator with full platform
+  PLATFORM_ADMIN                               configuration, user, application, capability,
+                                               scope, approval, and audit control.
+                                               One account that includes Citizen /
+  USER                                         Participant / Organiser functionality and may
+                                               receive additional Administrator-approved
+                                               capabilities.
+
+The additional capabilities are not account types and must not create separate user IDs:
+  Plain Text
+  CSR
+  LOCAL_AUTHORITY
+  DISTRICT_LEVEL
+  STATE_LEVEL
+The former MCD, MCD/BMC, or BMC capability must be renamed to Local Authority in the
+interface, database, API, route names, permissions, reports, seed data, and documentation.
+Preserve legacy values through a safe migration mapping.
+
+Rules for every stage
+1. Inspect the existing code before modifying it.
+2. Do not delete or rename existing production tables without a migration and rollback
+   plan.
+3. Do not remove existing routes until replacement routes are tested.
+4. Keep a compatibility layer while old and new models coexist.
+5. Use feature flags where a change could affect existing users.
+6. Use database transactions for multi-record changes.
+7. Never trust capability, function, or scope values sent by the browser.
+8. Enforce permissions in the backend as well as in the UI.
+9. Add tests before enabling a migrated feature for all users.
+10.At the end of every stage, report changed files, database changes, tests run, known
+   issues, and rollback steps.
+
+Stage 0 — Backup, branch, and architecture
+inspection
+
+Copy-paste prompt
+  Plain Text
+  Before changing the application, inspect the existing Next.js repository and cre
+
+  Do not modify production data, delete files, or change authentication yet.
+
+  Document:
+  1. Next.js version and routing approach.
+  2. Authentication provider and session structure.
+  3. Database engine, ORM, schema, migrations, and seed process.
+  4. Existing six user types, user IDs, role checks, middleware, guards, API route
+  5. Existing CSR, MCD/BMC, Local Authority, District-Level, State-Level, Particip
+  6. Existing event, sponsorship, participant, attendance, health, report, geograp
+  7. All routes and components that must remain compatible.
+  8. Current test, lint, type-check, and deployment commands.
+
+  Create a written migration report in the repository. Do not implement the migra
+
+
+
+
+Acceptance checklist
+ Check                                        Must be true
+ Existing architecture documented             Yes
+ Existing user and role model documented      Yes
+ Existing CSR routes and actions identified   Yes
+ Database backup or export plan documented    Yes
+ Rollback plan documented                     Yes
+ No destructive code changes                  Yes
+
+
+
+Stage 1 — Introduce terminology
+compatibility
+
+Objective
+Rename MCD, MCD/BMC, and BMC to Local Authority without breaking existing data or
+routes.
+Copy-paste prompt
+  Plain Text
+  Implement a safe terminology migration from MCD, MCD/BMC, and BMC to Local Autho
+
+  Requirements:
+  1. Use LOCAL_AUTHORITY as the new internal capability code.
+  2. Use Local Authority as the exact user-facing label.
+  3. Add a compatibility mapping for existing database values.
+  4. Preserve historical records and audit history.
+  5. Update labels, dropdowns, menus, dashboards, reports, notifications, validati
+  6. Do not break old records during the migration.
+  7. If old route names must remain temporarily, redirect them safely to the new
+  8. Add a migration script that is idempotent and can be safely rerun.
+  9. Add tests proving that old values resolve to Local Authority and no user-faci
+
+  Do not implement the two-account model yet. Make only this terminology and compa
+
+
+
+
+Acceptance checklist
+ • Existing records remain readable.
+ • New records use LOCAL_AUTHORITY .
+ • User-facing text says Local Authority.
+ • Old values map correctly.
+ • Migration can be rerun safely.
+ • Existing Local Authority and event pages still work.
+
+
+Stage 2 — Add the two account types
+without removing old access
+
+Objective
+Add PLATFORM_ADMIN and USER while keeping a temporary compatibility layer for existing
+users.
+Copy-paste prompt
+  Plain Text
+  Add the centralised account model without deleting existing user data or breakin
+
+  Implement:
+  1. PLATFORM_ADMIN as the only full administrative account type.
+  2. USER as the only normal account type.
+  3. A compatibility mapping from existing role-specific accounts or roles to one
+  4. A legacy reference field where required for traceability.
+  5. An idempotent migration that prevents duplicate users.
+  6. Session and authentication support for the two account types.
+  7. A feature flag so the old access model can remain available during testing.
+  8. Audit logs for account mapping and migration decisions.
+
+  Do not remove old dashboards yet. Do not activate the new capability model for a
+
+  At the end, provide a migration report showing how each existing user type maps
+
+
+
+
+Acceptance checklist
+ • Existing users can still log in.
+ • Every person has one permanent User ID.
+ • Existing records retain their original ownership.
+ • No duplicate users are created.
+ • Platform Administrator login works.
+ • Normal User login works.
+ • Old and new models can coexist behind a feature flag.
+
+
+Stage 3 — Create the capability and
+functionality model
+
+Objective
+Create reusable capabilities, individual functions, geographic scope, dates, status, and
+audit records.
+Copy-paste prompt
+  Plain Text
+  Implement the centralised capability model using the existing project’s ORM and
+
+  Create or reuse equivalent structures for:
+
+  1. Capability catalog:
+     - capability code
+     - function code
+    - display name
+    - description
+    - mandatory or optional status
+    - dependencies
+    - sensitive-data flag
+    - enabled status
+
+ 2. Capability Grant:
+    - grant ID
+    - user ID
+    - capability code
+    - scope type and scope ID
+    - project, programme, or event link where applicable
+    - selected function codes
+    - status: PENDING, ACTIVE, SUSPENDED, REVOKED, EXPIRED
+    - start date and expiry date
+    - purpose and reason
+    - approved by and approved at
+
+ 3. Capability Application:
+    - application ID
+    - user ID
+    - requested capability
+    - role-specific form data
+    - requested scope
+    - requested function codes
+    - supporting documents
+    - status and decision reason
+
+ 4. Audit records for every grant, function, scope, application, approval, rejec
+
+ Do not assume that selecting a capability grants every function. Store individua
+
+ Add seed data for CSR, LOCAL_AUTHORITY, DISTRICT_LEVEL, and STATE_LEVEL function
+
+
+
+
+Acceptance checklist
+• Capability catalog exists.
+• Individual functions can be stored.
+• Scope is stored separately from capability.
+• Grant status and dates are stored.
+• Application and grant records are linked to one User ID.
+• Audit records are created.
+ • Existing user and event data remain unchanged.
+
+
+Stage 4 — Implement central authorization
+and scope enforcement
+
+Objective
+Make capability permissions real at the backend before changing the UI.
+Copy-paste prompt
+  Plain Text
+  Implement central server-side authorization for the capability model.
+
+  Create project-compatible helpers equivalent to:
+
+  - canAccessWorkspace(userId, capabilityCode, scopeContext)
+  - canUseFunction(userId, functionCode, resourceContext)
+  - assertCapabilityFunction(userId, functionCode, resourceContext)
+  - assertScopeAccess(userId, scopeContext)
+
+  Enforce them in:
+  1. Server components.
+  2. Route handlers.
+  3. Server actions.
+  4. API endpoints.
+  5. Database query builders.
+  6. Report and export handlers.
+  7. Background jobs where applicable.
+
+  Rules:
+  - The server must load the active Capability Grant for the authenticated User ID
+  - The server must verify capability status, selected function, scope, dates, rec
+  - Unchecked functions must return access denied, such as HTTP 403 where appropri
+  - Direct URLs, modified browser requests, and manually constructed API requests
+  - Scope must be enforced in database queries, not only after data is loaded.
+  - Expired, suspended, and revoked grants must block authority actions.
+
+  Add authorization tests before changing navigation.
+Acceptance checklist
+ • Unchecked functions are rejected by the backend.
+ • Out-of-scope records cannot be queried or mutated.
+ • Expired grants are blocked.
+ • Suspended grants are blocked.
+ • Selected active functions work in protected test routes.
+ • Permission decisions are audited where required.
+
+
+Stage 5 — Add Organiser authority
+applications
+
+Objective
+Allow a normal User to request CSR, Local Authority, District-Level, or State-Level access
+from the Organiser page.
+Copy-paste prompt
+  Plain Text
+  Add Apply for Authority Access to the existing Organiser workspace.
+
+  User flow:
+  1. User opens Organiser Workspace.
+  2. User selects Apply for Authority Access.
+  3. System displays CSR, Local Authority, District-Level, and State-Level.
+  4. User selects one capability.
+  5. System opens the matching role-specific form.
+  6. User can save a draft or submit the application.
+  7. Submission creates an Authority Application ID and status SUBMITTED.
+  8. User can track the application under My Authority Applications.
+  9. No authority workspace is activated before Platform Administrator approval.
+
+  Create real forms with validation and database persistence.
+
+  CSR form must support:
+  - CSR company name
+  - Company registration or identification number
+  - Authorised contact person
+  - Official email and mobile number
+  - CSR programme or project
+  - Funds to be donated
+  - Funding purpose
+  - Transaction status
+  - Transaction/reference number and transaction date where applicable
+  - Preferred activity and area
+  - Expected participants and impact objective
+  - Supporting documents and declaration
+
+  Local Authority form must support authority or department name, officer details
+
+  District-Level form must support department, officer, official ID, contact detai
+
+  State-Level form must support department, officer, official ID, contact details
+
+  Use statuses DRAFT, SUBMITTED, UNDER_REVIEW, RETURNED_FOR_REVISION, REJECTED, AP
+
+
+
+
+Acceptance checklist
+ • User can open the application from Organiser Workspace.
+ • Each authority opens the correct form.
+ • Forms persist real data.
+ • Supporting documents are handled using the existing secure storage approach.
+ • User can save drafts and resubmit returned applications.
+ • No capability is activated automatically.
+
+
+Stage 6 — Add Administrator review and
+function assignment
+
+Objective
+Allow the Administrator to approve or reject applications and select individual functions.
+Copy-paste prompt
+  Plain Text
+ Create the Administrator Authority Applications workflow.
+
+ Administrator flow:
+ 1. Open Authority Applications.
+ 2. Filter by status, capability, User, geography, and date.
+ 3. Open one application.
+ 4. Review the User, completed form, documents, requested scope, and requested fu
+ 5. Select the approved capability scope.
+ 6. Display the complete functionality list for that capability.
+ 7. Select the exact functions to provide using checkboxes.
+ 8. Allow the Administrator to grant fewer functions than requested.
+ 9. Show a live User will see preview.
+ 10. Confirm purpose, start date, expiry date, and decision reason.
+ 11. Provide three actions:
+     - Approve and Grant Selected Functions
+     - Return for Revision
+     - Reject Application
+ 12. Record the decision, selected functions, unselected functions, scope, dates
+ 13. Notify the User.
+
+ The Capability Grant must contain only checked function codes.
+
+ A selected function is valid only if it is implemented and has a working route o
+
+ Unchecked functions must not be granted, displayed, or executable.
+
+
+
+
+Acceptance checklist
+• Administrator can review applications.
+• Administrator can approve, return, and reject.
+• Rejection and return require reasons.
+• Administrator can grant fewer functions than requested.
+• Selected and unselected functions are shown separately.
+• Capability Grant stores only selected functions.
+• User receives a decision notification.
+• Audit record is created for the decision.
+Stage 7 — Build workspace selection and
+dynamic navigation
+
+Objective
+Show each User only the workspaces and functions approved by the Administrator.
+Copy-paste prompt
+  Plain Text
+  Implement the central User Workspace Selection experience.
+
+  After login:
+  1. Always show the standard Citizen / Participant / Organiser workspace.
+  2. Show additional capability workspaces only for active Capability Grants.
+  3. Show capability name, scope, status, dates, and selected-function count.
+  4. Allow the User to enter only ACTIVE grants.
+  5. Keep pending, expired, suspended, and revoked grants unavailable.
+  6. When the User enters a capability workspace, generate navigation, dashboard c
+  7. Do not show a menu simply because a capability exists.
+  8. Clear the previous workspace’s filters and data context when switching worksp
+  9. Show appropriate empty, loading, unauthorized, expired, suspended, and error
+  10. Backend authorization must remain active even when a menu item is hidden.
+
+  The capability workspace must contain real working actions, not static cards.
+
+
+
+
+Acceptance checklist
+ • User sees one central login.
+ • Standard Participant / Organiser workspace remains available.
+ • Only active approved capability workspaces appear.
+ • Only selected functions appear inside a workspace.
+ • Unchecked functions are hidden.
+ • Direct access to unchecked functions is blocked.
+ • Workspace switching does not leak data or filters.
+Stage 8 — Implement the complete CSR
+workflow
+
+Objective
+Preserve the CSR functionality exactly as requested and make it operational.
+Copy-paste prompt
+  Plain Text
+  Implement the CSR capability as a fully operational workspace. Do not create a s
+
+  When the User has an active CSR Capability Grant with the selected CSR functions
+
+  1. Submit Sponsorship Request
+     - Open the CSR request form.
+     - Save a draft.
+     - Submit the form.
+     - Create a Sponsorship Request ID.
+     - Set status to SUBMITTED.
+     - Place the request in the Administrator queue.
+     - Notify the Administrator and CSR User.
+
+  2. Administrator review
+     - Administrator reviews the request.
+     - Administrator can approve, return for revision, or reject.
+     - Each decision records a reason and audit event.
+
+  3. Administrator event assignment
+     - After approval, Administrator selects one particular suitable event.
+     - The event may be an existing future event, a Future Event Concept, or a new
+     - Create Sponsorship ID and Event Assignment ID.
+     - Link them to the selected event or concept.
+     - Do not allow the CSR User to browse the complete event catalogue or self-as
+
+  4. Future Event Concept
+     - A concept may not accept registration.
+     - A concept may not generate a public QR code.
+     - A concept may not record attendance or event health entries.
+     - An authorised event owner must create the actual event.
+     - The actual event must pass location, date, capacity, activity, consent, and
+     - Only then create the Event ID and QR token.
+ 5. Sponsored Events page
+    - Show only events assigned to this CSR User through approved Event Assignmen
+    - Do not show unrelated events, unassigned concepts, or another CSR User’s ev
+    - Show Event ID, Sponsorship ID, Event Assignment ID, title, activity, date,
+
+ 6. Limited assigned-event participant information
+    For the assigned event only, show fields approved by the Administrator, such
+    - Name.
+    - Mobile number when required for approved communication.
+    - Email when required for approved communication.
+    - Gender.
+    - Age group.
+    - Registration status.
+    - Attendance/check-in status.
+    - Participation date.
+
+    Do not show complete profiles, addresses, identity documents, unrelated even
+
+ 7. Funding and impact
+    - Store funding and transaction details.
+    - Show funding status.
+    - Show approved event reports and aggregate impact.
+    - Do not mark sponsorship complete until required reports and funding records
+
+ 8. Additional sponsorship requests
+    - While the CSR Capability Grant is active, the User can submit another spons
+    - Every new request creates its own Sponsorship Request ID.
+    - Every new request requires separate Administrator review and event assignme
+    - Approval of one request must not automatically approve another.
+
+ 9. Restrictions
+    - CSR cannot approve its own request.
+    - CSR cannot assign an event to itself.
+    - CSR cannot change assigned event, owner, location, date, capacity, attendan
+    - CSR cannot export unrestricted personal or health information.
+
+ Connect every CSR function to a working page, route/server action/API, database
+
+
+
+
+CSR acceptance checklist
+Test                                    Expected result
+CSR opens Submit Sponsorship Request    Working form opens
+CSR submits request                     Request ID is created and Admin queue
+                                        receives it
+ Admin rejects request                         CSR sees rejection and reason
+ Admin returns request                         CSR can edit and resubmit
+ Admin approves request                        Sponsorship and Assignment IDs are created
+ Admin assigns event                           CSR sees only that event
+ CSR opens Sponsored Events                    No unrelated events are visible
+ CSR opens participant data                    Only assigned-event approved fields are
+                                               visible
+ CSR submits another request                   New request follows separate Admin review
+ CSR calls unchecked endpoint                  Request is denied
+ CSR changes URL to another event              Request is denied
+ Event report is approved                      Impact and completion status update
+                                               correctly
+
+Do not proceed until every CSR test passes.
+
+Stage 9 — Connect Local Authority, District-
+Level, and State-Level functions
+
+Objective
+Reuse the existing authority functionality through approved capability grants.
+Copy-paste prompt
+  Plain Text
+  Connect the existing authority functionality to the new capability model withou
+
+  For Local Authority, implement only the functions selected by the Administrator
+  - Review local event.
+  - Approve, reject, or return local event.
+  - Manage approved locations.
+  - Enforce location/date uniqueness.
+  - Monitor local registration and attendance.
+ - Validate local event reports.
+ - View authorised in-scope manual health entries.
+ - Export approved masked local reports.
+
+ For District-Level, implement only selected functions, such as:
+ - Create district plan.
+ - Review district event.
+ - Approve, reject, or return district event.
+ - Monitor district delivery.
+ - Validate event reports.
+ - Create district MIS.
+ - Manage district exceptions.
+ - View authorised in-scope health entries.
+
+ For State-Level, implement only selected functions, such as:
+ - Create state programme or campaign.
+ - Review district performance.
+ - View state coverage.
+ - Consolidate state MIS.
+ - Manage state escalations.
+ - Review CSR aggregate impact.
+ - View authorised in-scope health entries.
+
+ Use the same central authorization helpers, scope enforcement, status transition
+
+ Never show or enable an authority function merely because the capability code ex
+
+
+
+
+Acceptance checklist
+• Local Authority uses the exact label Local Authority.
+• Each authority workspace is scoped correctly.
+• Each selected function performs a real action.
+• Unselected functions are hidden and blocked.
+• State and District users cannot access records outside scope.
+• Existing event and reporting workflows remain functional.
+
+
+Stage 10 — Implement append-only daily
+health history
+Objective
+Preserve manual health entry and immutable history.
+Copy-paste prompt
+  Plain Text
+  Implement manual, append-only health entries.
+
+  Rules:
+  1. The User manually enters health details when required.
+  2. The first submission creates a dated Health Entry ID.
+  3. For a long event, the User can select Add Daily Health Update.
+  4. Every daily update creates a new record linked to the User, event, and date.
+  5. Previous entries must never be overwritten or deleted through normal actions
+  6. Corrections must create a separate correction record containing original reco
+  7. Platform Administrator, State-Level, District-Level, and Local Authority Use
+  8. CSR sees approved summaries by default; individual assigned-event fields requ
+  9. Every health-data view and export must be audited.
+
+  Add database constraints or service-level protections that prevent silent update
+
+
+
+
+Acceptance checklist
+ • Manual health form works.
+ • Long event supports Add Daily Health Update.
+ • New day creates a new record.
+ • Previous record remains unchanged.
+ • Correction creates a separate record.
+ • Scope and function checks are enforced.
+ • Health-data access is audited.
+
+
+Stage 11 — Remove legacy access only after
+migration validation
+
+Objective
+Retire the old six-user-type access model only after the new model is proven.
+Copy-paste prompt
+  Plain Text
+  Prepare the final cutover from the legacy six-user-type model to the two-accoun
+
+  Before disabling legacy access:
+  1. Verify all users have a permanent User ID.
+  2. Verify all legacy records map to the correct User ID.
+  3. Verify MCD, MCD/BMC, and BMC values map to LOCAL_AUTHORITY.
+  4. Verify CSR sponsorship records and events remain linked.
+  5. Verify Participant / Organiser functionality remains available.
+  6. Verify all active grants, selected functions, scopes, dates, and audit record
+  7. Verify CSR request, assignment, Sponsored Events, participant-data, funding,
+  8. Verify Local Authority, District-Level, and State-Level workflows.
+  9. Verify health history remains append-only.
+  10. Run the complete test suite, type-check, lint, migration checks, and end-to
+  11. Enable the new model for a controlled pilot group.
+  12. Monitor errors and audit logs.
+  13. Expand rollout only after the pilot is stable.
+  14. Keep a rollback flag available until the migration is formally accepted.
+
+  Do not delete legacy data. Disable legacy access only after signed-off validatio
+
+
+
+
+Acceptance checklist
+ • Pilot users can complete their workflows.
+ • CSR functionality passes all tests.
+ • Local Authority replacement is complete.
+ • No old six-role login is required for normal operation.
+ • Rollback remains available.
+ • Legacy data is preserved.
+
+
+Final end-to-end test
+Run this test after all stages:
+  Plain Text
+  One User ID
+  → Login
+  → Participant / Organiser Workspace
+  → Apply for Authority Access
+  → Select CSR
+  → Complete CSR form
+  → Submit application
+  → Administrator reviews application
+  → Administrator selects CSR capability
+  → Administrator selects individual CSR functions
+  → Administrator selects scope and dates
+  → Capability Grant becomes ACTIVE
+  → CSR workspace appears
+  → CSR submits Sponsorship Request
+  → Administrator reviews request
+  → Administrator assigns one particular event
+  → Sponsorship ID and Event Assignment ID are created
+  → CSR sees only the assigned event
+  → CSR sees only approved participant fields for that event
+  → Event is approved and delivered
+  → Funding and impact records update
+  → CSR submits another request
+  → New request receives a separate Administrator review
+  → Unchecked functions remain hidden and backend-blocked
+  → All actions are audited
+
+
+  Completion rule: Do not claim that the migration is complete because the new menus
+  are visible. A capability is complete only when each selected function works through the
+  complete chain of UI action, authorization, scope validation, database operation,
+  workflow status, notification, audit record, and updated result.
+
+How to use this guide
+Start with Stage 0. Give only one stage prompt to the coding assistant at a time. Ask it to
+stop after the stage’s acceptance checklist and provide its change summary. Review the
+result, run the tests, commit the changes, and then continue to the next stage.
+If the coding assistant cannot complete a selected function end to end, do not activate that
+function. Keep it unchecked until its complete implementation is ready.
+End of staged migration guide.
+

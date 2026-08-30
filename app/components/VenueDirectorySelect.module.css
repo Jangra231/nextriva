@@ -1,0 +1,25 @@
+.picker { display:grid; gap:14px; margin-top:16px; }
+.quickPick { display:grid; gap:12px; padding:16px; border:2px solid #b8d9a9; border-radius:14px; background:linear-gradient(135deg,#f3fbed,#fffdf8); }.quickPick > div { display:grid; gap:4px; }.quickPick > div span { color:#39715b; font-size:11px; font-weight:900; letter-spacing:.55px; text-transform:uppercase; }.quickPick > div b { color:#193a32; font-size:17px; }.quickPick > div small { color:#607268; font-size:12px; line-height:1.45; }
+.filters { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:10px; padding:13px; border:1px solid #d7e8cf; border-radius:12px; background:#f7fbf4; }
+.search { grid-column:span 2; display:flex; align-items:center; gap:7px; }
+.search input { min-width:0; }
+.summary { display:flex; align-items:center; gap:5px; color:#39715b; }
+.directoryLabel { display:grid; width:100%; gap:7px; font-size:13px; }.directoryLabel select { width:100%; min-height:52px; font-size:14px; }
+.manualFallback { display:flex; align-items:center; justify-content:space-between; gap:14px; padding:13px; border:1px dashed #bdcfb8; border-radius:12px; background:#fcfdf9; }.manualFallback div { display:grid; gap:3px; }.manualFallback b { color:#315344; font-size:13px; }.manualFallback small { max-width:560px; color:#65716a; font-size:12px; line-height:1.4; }
+.calendarWrap { display:grid; gap:9px; padding:13px; border:1px solid #d8e6d2; border-radius:13px; background:#f8fbf6; }
+.advancedFilters { border:1px solid #dce7d6; border-radius:12px; background:#fff; }.advancedFilters summary { display:flex; align-items:center; gap:7px; padding:12px 13px; color:#315344; cursor:pointer; font-size:13px; font-weight:800; }.advancedFilters[open] summary { border-bottom:1px solid #e4ece0; }.advancedFilters .filters { border:0; border-radius:0; background:transparent; }.advancedFilters .radius { margin:0 13px 13px; }.filterResult { margin:0 13px 13px; color:#607268; font-size:12px; font-weight:700; }
+.presets { display:grid; gap:7px; padding:12px 13px; border:1px solid #d7e8cf; border-radius:12px; background:#fffdf8; color:#315344; font-size:12px; }
+.presets > div { display:flex; flex-wrap:wrap; gap:7px; }
+.availability { display:grid; gap:4px; padding:11px 13px; border:1px solid #d8e8d2; border-radius:12px; background:#f5fbf1; color:#315344; font-size:12px; }
+.availability span,.conflicts b { display:flex; align-items:center; gap:6px; }.availability small { color:#5e7165; line-height:1.4; }
+.conflicts { display:grid; gap:6px; padding:11px 13px; border:1px solid #f0cfbf; border-radius:12px; background:#fff6f2; color:#8a483b; font-size:12px; line-height:1.4; }.conflicts span { color:#7a5e57; }.conflicts strong { color:#7d382d; }
+.conflictRow { display:flex; align-items:center; justify-content:space-between; gap:10px; }.watchForm button { border:1px solid #dfb7ac; border-radius:8px; background:#fff; color:#944636; font-size:11px; font-weight:800; padding:6px 8px; cursor:pointer; white-space:nowrap; }.watchForm button:hover { background:#fff0eb; }
+.preset { display:inline-flex; overflow:hidden; border:1px solid #c9dfbd; border-radius:999px; background:#fff; }
+.preset button { border:0; background:transparent; color:#315344; font-size:11px; font-weight:800; cursor:pointer; padding:6px 9px; }
+.preset button:first-child:hover { background:#f1f8eb; }
+.removePreset { border-left:1px solid #dce8d6!important; color:#9d483d!important; }
+.radius { display:grid; grid-template-columns:minmax(0,1fr) minmax(150px,.45fr) auto; align-items:end; gap:10px; padding:12px 13px; border:1px solid #d4e5cc; border-radius:12px; background:#f7fbf4; }
+.radius > div { display:grid; gap:3px; align-self:center; }.radius small { color:#65716a; font-size:11px; line-height:1.35; }
+.savePreset { display:flex; align-items:end; gap:9px; padding:11px 12px; border:1px dashed #c9dfbd; border-radius:11px; background:#fbfdf9; }.savePreset label { flex:1; }.savePreset input { min-width:0; }
+@media (max-width:900px) { .filters { grid-template-columns:repeat(2,minmax(0,1fr)); } .search { grid-column:span 2; } }
+@media (max-width:560px) { .filters { grid-template-columns:1fr; } .search { grid-column:auto; } .radius { grid-template-columns:1fr; } .radius .btn,.savePreset .btn { width:100%; }.savePreset { align-items:stretch; flex-direction:column; }.manualFallback { align-items:stretch; flex-direction:column; }.manualFallback .btn { width:100%; } }

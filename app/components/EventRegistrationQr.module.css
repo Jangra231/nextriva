@@ -1,0 +1,162 @@
+.root {
+  display: grid !important;
+  grid-template-columns: 1fr !important;
+  gap: 12px !important;
+  width: 100%;
+  padding: 16px !important;
+}
+
+.contentRow {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 22px;
+  width: 100%;
+}
+
+.copy {
+  display: grid;
+  align-content: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #2f6b3e;
+  font: 800 11px "Plus Jakarta Sans", sans-serif;
+  letter-spacing: .03em;
+  text-transform: uppercase;
+}
+
+.copy h3 {
+  margin: 0;
+  color: #153f33;
+  font: 800 22px "Plus Jakarta Sans", sans-serif;
+}
+
+.copy p {
+  max-width: 520px;
+  margin: 0;
+  color: #5b6d66;
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+.qrVisual {
+  display: grid;
+  place-items: center;
+  width: 156px;
+  height: 156px;
+  padding: 9px;
+  border: 1px solid #d6e8d8;
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0 8px 18px rgba(21, 63, 51, .08);
+}
+
+.qrVisual img {
+  display: block;
+  width: 136px !important;
+  height: 136px !important;
+  border-radius: 8px;
+  background: #fff;
+}
+
+.actions {
+  display: grid !important;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+  width: 100%;
+}
+
+.actions :global(.event-qr-action) {
+  width: 100%;
+  min-height: 40px;
+  padding: 8px 10px;
+  text-decoration: none;
+}
+
+.imageDownload {
+  border-color: #95c99c !important;
+  background: #eaf7e5 !important;
+}
+
+.imageDownload:hover {
+  background: #d9f0d2 !important;
+}
+
+.shareAction {
+  border-color: #153f33 !important;
+  background: #153f33 !important;
+  color: #fff !important;
+}
+
+.shareAction:hover {
+  background: #225744 !important;
+}
+
+:global(.event-registration-qr.banner).root {
+  position: absolute !important;
+  right: auto !important;
+  bottom: 14px !important;
+  left: 14px !important;
+  z-index: 2;
+  width: calc(100% - 28px) !important;
+  max-width: none !important;
+  margin: 0 !important;
+  padding: 14px !important;
+  border-radius: 16px !important;
+  background: rgba(255, 255, 255, .97) !important;
+  box-shadow: 0 16px 34px rgba(0, 0, 0, .22) !important;
+}
+
+:global(.event-registration-qr.banner).root .copy h3 {
+  font-size: 18px;
+}
+
+:global(.event-registration-qr.banner).root .copy p {
+  font-size: 12px;
+}
+
+:global(.event-registration-qr.banner).root .qrVisual {
+  width: 112px;
+  height: 112px;
+  padding: 6px;
+  border-radius: 12px;
+}
+
+:global(.event-registration-qr.banner).root .qrVisual img {
+  width: 98px !important;
+  height: 98px !important;
+}
+
+:global(.event-registration-qr.banner).root .actions :global(.event-qr-action) {
+  min-height: 34px;
+  padding: 6px 8px;
+  font-size: 11px;
+}
+
+@media (max-width: 760px) {
+  .root,
+  :global(.event-registration-qr.banner).root {
+    position: static !important;
+    width: auto !important;
+    margin: 12px !important;
+  }
+
+  .contentRow {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .qrVisual {
+    justify-self: start;
+  }
+
+  .actions {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

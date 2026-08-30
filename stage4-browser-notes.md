@@ -1,0 +1,9 @@
+# Stage 4 Browser Verification Notes
+
+- Restarted the managed development service after the Stage 4 authorization, grant-expiry, and catalog-usability changes.
+- Opened `/dashboard/capabilities` in an authenticated account without submitting an application. The catalog showed all six active capabilities and rendered the new audience, function-type, data-handling, dependency, and sort controls, alongside Apply and Clear controls.
+- Selected and applied the non-mutating **Optional functions** filter. The URL retained `functionType=optional` and recommended sort, the result count changed from six to five capabilities, and each request link preserved the active filter query. No application, grant, or administrative action was submitted in this browser session.
+- Opened `/admin?view=capabilities` as the administrator. The page rendered the six-entry catalog, a Stage 4 Local Authority migration-grant form for the retained `mcd` account, a zero-count due-expiry indicator, and the empty expiry-operation state. No grant was created.
+- Attempted the Local Authority events route while still signed in as an administrator. The retained role boundary redirected to Local Authority login, confirming an administrator does not silently receive authority execution access. No event decision was submitted.
+- Signed in using the provided Local Authority demonstration account and opened the retained canonical Local Authority workspace. Existing city activity, participation, eligible-location, CSR, organizer, and ward-monitoring data rendered intact, including the submitted-event review queue. No event-review form was submitted.
+- Opened the Local Authority event-review view. The submitted-event review form remained available under the explicitly displayed Stage 4 compatibility-mode notice, while every non-submitted record remained monitoring-only. No review was recorded, so existing event lifecycle data was not changed during browser validation.

@@ -1,0 +1,64 @@
+.layout {
+  min-height: 100vh;
+  background: #f5f7f2;
+  color: #153f33;
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 16px clamp(20px, 4vw, 56px);
+  border-bottom: 1px solid #dbe6d5;
+  background: #fff;
+}
+
+.identity, .account {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.identity span:last-child { color: #587167; font-size: 13px; }
+.account { color: #587167; font-size: 13px; }
+.account a { color: #153f33; font-weight: 800; text-decoration: none; }
+
+.body {
+  display: grid;
+  grid-template-columns: 230px minmax(0, 1fr);
+  min-height: calc(100vh - 70px);
+}
+
+.sidebar {
+  display: grid;
+  align-content: start;
+  gap: 6px;
+  padding: 22px 14px;
+  border-right: 1px solid #dbe6d5;
+  background: #edf3ea;
+}
+
+.sidebar p { margin: 0 10px 8px; color: #7a8e84; font: 800 10px "Plus Jakarta Sans", sans-serif; letter-spacing: .08em; text-transform: uppercase; }
+.sidebar a { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 10px; color: #45635a; font: 800 13px "Plus Jakarta Sans", sans-serif; text-decoration: none; }
+.sidebar a:hover, .sidebar a.active { color: #fff; background: #153f33; }
+
+.main { min-width: 0; padding: clamp(22px, 4vw, 48px); }
+
+@media (max-width: 760px) {
+  .topbar { align-items: flex-start; flex-direction: column; }
+  .body { grid-template-columns: 1fr; }
+  .sidebar { grid-template-columns: repeat(3, minmax(0, 1fr)); overflow-x: auto; border-right: 0; border-bottom: 1px solid #dbe6d5; padding: 10px; }
+  .sidebar p { display: none; }
+  .sidebar a { justify-content: center; padding: 9px; font-size: 11px; white-space: nowrap; }
+  .main { padding: 20px; }
+}
+
+:global(.admin-table-wrap) { overflow: auto; border: 1px solid #e1e9dc; border-radius: 14px; }
+:global(.admin-table) { width: 100%; min-width: 720px; border-collapse: collapse; background: #fff; }
+:global(.admin-table th), :global(.admin-table td) { padding: 13px 14px; border-bottom: 1px solid #e7ede3; text-align: left; vertical-align: top; font-size: 13px; }
+:global(.admin-table th) { color: #6d8278; background: #f6f9f3; font: 800 11px "Plus Jakarta Sans", sans-serif; letter-spacing: .04em; text-transform: uppercase; }
+:global(.admin-table td b) { color: #183f34; }
+:global(.admin-table td small) { color: #72857c; font-size: 11px; }
+:global(.admin-table tr:last-child td) { border-bottom: 0; }
+:global(.admin-control-stack) { display: grid; gap: 6px; }

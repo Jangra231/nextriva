@@ -1,0 +1,17 @@
+.panel { display: flex; gap: 12px; align-items: flex-start; padding: 16px; margin-bottom: 18px; border: 1px solid #d9e6de; background: #f5faf6; border-radius: 14px; color: #183d31; }
+.panel h3 { margin: 2px 0 4px; font-size: 15px; }
+.panel p { margin: 0; color: #526b60; font-size: 13px; line-height: 1.45; }
+.eyebrow { color: #466b58; font-size: 11px; text-transform: uppercase; letter-spacing: .08em; font-weight: 800; }
+.note { margin: 10px 0 8px; padding: 10px 12px; border-left: 3px solid #ef654f; background: #fff8f5; color: #5c4039; font-size: 13px; line-height: 1.45; }
+.panel small { color: #6e8178; font-size: 11px; }
+.rejected { background: #fff9ee; border-color: #f3d69b; }
+.frozen, .suspended, .deleted { background: #fff5f4; border-color: #f1c6c1; }
+.approved { background: #f2fbef; border-color: #c9e8bd; }
+.timeline { display: grid; gap: 10px; margin: 15px 0 0; padding: 0; list-style: none; }
+.timeline li { position: relative; display: grid; grid-template-columns: 12px minmax(0,1fr); gap: 9px; align-items: start; }
+.timeline li:not(:last-child):after { content: ""; position: absolute; left: 5px; top: 12px; bottom: -11px; width: 2px; background: #cbded0; }
+.timeline i { position: relative; z-index: 1; width: 12px; height: 12px; margin-top: 3px; border: 2px solid #639a72; border-radius: 999px; background: #f5faf6; }
+.timeline .current i { border-color: #ef654f; background: #fff0ed; }
+.timeline b { display: block; font-size: 12px; }
+.timeline time, .timeline span { display: block; margin-top: 2px; color: #667c70; font-size: 11px; line-height: 1.4; }
+.timeline span { color: #5c4039; }

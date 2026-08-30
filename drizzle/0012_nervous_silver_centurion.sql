@@ -1,0 +1,1 @@
+ALTER TABLE `events` ADD `fillingFastThresholdPercent` int DEFAULT 70 NOT NULL;
