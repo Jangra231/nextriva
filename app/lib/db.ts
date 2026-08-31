@@ -224,7 +224,7 @@ export async function findUserById(id: number) {
 
 export type AccountProfileType = "USER" | "PLATFORM_ADMIN";
 
-function accountProfileValues(role: "user" | "admin" | "mcd" | "csr") {
+function accountProfileValues(role: "user" | "admin" | "mcd" | "csr" | "state" | "district") {
   const accountType: AccountProfileType = role === "admin" ? "PLATFORM_ADMIN" : "USER";
   const profileTerminology = accountType === "PLATFORM_ADMIN" ? "Platform Admin Profile" : "User Profile";
   const capabilityCode = role === "mcd" ? "LOCAL_AUTHORITY" : role === "csr" ? "CSR" : null;
@@ -695,6 +695,81 @@ export async function recordUserSignIn(userId: number) {
   const user = await findUserById(userId);
   if (!user) return undefined;
   await db().update(users).set({ publicId: user.publicId || createPublicUserId(), lastSignedIn: new Date() }).where(eq(users.id, userId));
+  return findUserById(userId);
+}
+
+export async function createPhoneUser(phone: string) {
+  const openId = `account-${crypto.randomUUID()}`;
+  const result = await db().insert(users).values({
+    publicId: createPublicUserId(),
+    openId,
+    phone,
+    loginMethod: "phone",
+    role: "user",
+    phoneVerified: true,
+    lastSignedIn: new Date(),
+  });
+  const user = await findUserById(Number(result[0].insertId));
+  if (user) await ensureUserAccountProfile(user.id);
+  return user;
+}
+
+export async function findUserByPhone(phone: string) {
+  const rows = await db().select().from(users).where(eq(users.phone, phone)).limit(1);
+  return rows[0];
+}
+
+export async function completeUserProfile(userId: number, input: {
+  name: string;
+  gender?: string | null;
+  dateOfBirth?: string | null;
+  state?: string | null;
+  city?: string | null;
+  interests?: string[] | null;
+  eventFormat?: string[] | null;
+  eventFrequency?: string | null;
+  notificationPrefs?: { email: boolean; push: boolean; sms: boolean } | null;
+  avatarUrl?: string | null;
+}) {
+  const name = input.name.trim().slice(0, 100);
+  if (name.length < 2) throw new Error("Enter a name with at least two characters");
+
+  const values: Record<string, unknown> = {
+    name,
+    gender: input.gender?.trim() || null,
+    dateOfBirth: input.dateOfBirth?.trim() || null,
+    state: input.state?.trim() || null,
+    city: input.city?.trim() || null,
+    interests: input.interests || null,
+    eventFormat: input.eventFormat || null,
+    eventFrequency: input.eventFrequency?.trim() || null,
+    notificationPrefs: input.notificationPrefs || null,
+    profileCompleted: true,
+    phoneVerified: true,
+  };
+
+  if (input.avatarUrl !== undefined) {
+    const avatarUrl = input.avatarUrl?.trim() || null;
+    if (avatarUrl && !isProfileAvatarUrl(avatarUrl, userId)) throw new Error("Use the profile image upload control to choose an avatar");
+    values.avatarUrl = avatarUrl;
+  }
+
+  await db().update(users).set(values).where(eq(users.id, userId));
+  return findUserById(userId);
+}
+
+export async function changeUserPassword(userId: number, newPasswordHash: string) {
+  await db().update(users).set({ passwordHash: newPasswordHash }).where(eq(users.id, userId));
+  return findUserById(userId);
+}
+
+export async function updateUserPhone(userId: number, phone: string) {
+  await db().update(users).set({ phone, phoneVerified: true }).where(eq(users.id, userId));
+  return findUserById(userId);
+}
+
+export async function updateUserPasswordHash(userId: number, passwordHash: string) {
+  await db().update(users).set({ passwordHash }).where(eq(users.id, userId));
   return findUserById(userId);
 }
 
@@ -1414,7 +1489,7 @@ export async function adminReleaseVenueReservation(adminId: number, eventId: num
   return { before, after, venueId };
 }
 
-export async function adminSetUserRole(adminId: number, userId: number, role: "user" | "admin" | "mcd" | "csr") {
+export async function adminSetUserRole(adminId: number, userId: number, role: "user" | "admin" | "mcd" | "csr" | "state" | "district") {
   const before = await findUserById(userId);
   if (!before) throw new Error("Account not found");
   if (before.id === adminId && role !== "admin") throw new Error("You cannot remove your own administrator access");
@@ -1442,6 +1517,30 @@ export async function adminCreateLocalAuthorityAccount(adminId: number, input: {
 
 /** @deprecated Stage 1 compatibility alias. New code must use adminCreateLocalAuthorityAccount. */
 export const adminCreateMcdAccount = adminCreateLocalAuthorityAccount;
+
+export async function adminCreateStateAccount(adminId: number, input: { name: string; email: string; passwordHash: string }) {
+  const name = input.name.trim().slice(0, 100); const email = input.email.trim().toLowerCase();
+  if (name.length < 2 || !email.includes("@")) throw new Error("Enter a state authority name and a valid email");
+  if (await findUserByEmail(email)) throw new Error("An account with this email already exists");
+  const created = await db().insert(users).values({ publicId: createPublicUserId(), openId: `state-authority-${crypto.randomUUID()}`, name, email, passwordHash: input.passwordHash, loginMethod: "admin-provisioned", role: "state", lastSignedIn: new Date() });
+  const account = await findUserById(Number(created[0].insertId));
+  if (!account) throw new Error("State authority account creation failed");
+  await ensureUserAccountProfile(account.id);
+  await recordAdminAudit(adminId, "state_authority.account_created", "user", account.id, null, { id: account.id, publicId: account.publicId, email: account.email, role: account.role });
+  return account;
+}
+
+export async function adminCreateDistrictAccount(adminId: number, input: { name: string; email: string; passwordHash: string }) {
+  const name = input.name.trim().slice(0, 100); const email = input.email.trim().toLowerCase();
+  if (name.length < 2 || !email.includes("@")) throw new Error("Enter a district authority name and a valid email");
+  if (await findUserByEmail(email)) throw new Error("An account with this email already exists");
+  const created = await db().insert(users).values({ publicId: createPublicUserId(), openId: `district-authority-${crypto.randomUUID()}`, name, email, passwordHash: input.passwordHash, loginMethod: "admin-provisioned", role: "district", lastSignedIn: new Date() });
+  const account = await findUserById(Number(created[0].insertId));
+  if (!account) throw new Error("District authority account creation failed");
+  await ensureUserAccountProfile(account.id);
+  await recordAdminAudit(adminId, "district_authority.account_created", "user", account.id, null, { id: account.id, publicId: account.publicId, email: account.email, role: account.role });
+  return account;
+}
 
 export type CsrProfileInput = { companyName: string; registrationNumber?: string | null; foundationName?: string | null; contactName: string; contactEmail: string; contactPhone?: string | null; focusAreas?: string | null };
 export type CsrBudgetInput = { label: string; totalPaise: number; startsAt?: Date | null; endsAt?: Date | null };

@@ -267,6 +267,20 @@
       "when": 1787657084916,
       "tag": "0037_huge_red_shift",
       "breakpoints": true
+    },
+    {
+      "idx": 38,
+      "version": "5",
+      "when": 1788164547183,
+      "tag": "0038_simple_the_renegades",
+      "breakpoints": true
+    },
+    {
+      "idx": 39,
+      "version": "5",
+      "when": 1788169972283,
+      "tag": "0039_calm_sentry",
+      "breakpoints": true
     }
   ]
 }

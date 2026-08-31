@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
-import { adminAssignCsrCapabilityRequest, adminAssignCsrSponsorshipRequest, adminCreateCsrAccount, adminCreateLocalAuthorityAccount, adminImportVenues, adminModerateEvent, adminRecordCsrCapabilityFunding, adminReleaseVenueReservation, adminReviewCapabilityApplication, adminReviewCsrCapabilityRequest, adminReviewCsrSponsorshipRequest, adminReviewVenueApprovalRequest, adminSaveVenue, adminSeedSampleVenues, adminSetPaymentStatus, adminSetPromotionStatus, adminSetRegistrationStatus, adminSetUserRole, adminUpdateCapabilityGrant, adminUpdatePlatformSettings, completeOrganizerEvent, confirmManualPayment, createAuthorityDeliveryPlan, createAuthorityException, createAuthorityStateProgramme, createOrganizerVenueApprovalRequest, createOrganizerVenueFilterPreset, createParticipantHistoryCorrection, createParticipantHistoryEntry, createPasswordUser, createDraftEvent, createPromotion, csrCreateBudget, csrCreateCapabilityBudget, csrSaveCapabilitySponsorshipRequest, csrSaveSponsorshipRequest, csrSubmitCapabilitySponsorshipRequest, csrSubmitSponsorshipRequest, deleteOrganizerVenueFilterPreset, findActiveVenueConflict, findUserByEmail, findUserById, getApprovedVenue, getOrganizerEvent, getRegistrationNotificationDataByOrder, localAuthorityModerateEvent, markOrganizerVenueAvailabilityNotificationRead, markRegistrationConfirmationSent, moderateAuthorityCapabilityEvent, recordUserSignIn, registerForEvent, rejectManualPayment, replaceQuestions, replaceTickets, resolveAuthorityException, resolveWorkspaceLandingPath, saveCapabilityApplication, saveCsrCapabilityProfile, saveWorkspaceLandingPreference, setParticipantHealthConsent, submitCapabilityApplication, submitEventForApproval, submitManualPaymentProof, subscribeOrganizerToVenueAvailability, toggleEventFavorite, updateEvent, updateRegistrationStatus, updateUserProfile } from "./lib/db";
+import { adminAssignCsrCapabilityRequest, adminAssignCsrSponsorshipRequest, adminCreateCsrAccount, adminCreateDistrictAccount, adminCreateLocalAuthorityAccount, adminCreateStateAccount, adminImportVenues, adminModerateEvent, adminRecordCsrCapabilityFunding, adminReleaseVenueReservation, adminReviewCapabilityApplication, adminReviewCsrCapabilityRequest, adminReviewCsrSponsorshipRequest, adminReviewVenueApprovalRequest, adminSaveVenue, adminSeedSampleVenues, adminSetPaymentStatus, adminSetPromotionStatus, adminSetRegistrationStatus, adminSetUserRole, adminUpdateCapabilityGrant, adminUpdatePlatformSettings, completeOrganizerEvent, confirmManualPayment, createAuthorityDeliveryPlan, createAuthorityException, createAuthorityStateProgramme, createOrganizerVenueApprovalRequest, createOrganizerVenueFilterPreset, createParticipantHistoryCorrection, createParticipantHistoryEntry, createPhoneUser, createPasswordUser, createDraftEvent, createPromotion, csrCreateBudget, csrCreateCapabilityBudget, csrSaveCapabilitySponsorshipRequest, csrSaveSponsorshipRequest, csrSubmitCapabilitySponsorshipRequest, csrSubmitSponsorshipRequest, deleteOrganizerVenueFilterPreset, findActiveVenueConflict, findUserByEmail, findUserById, findUserByPhone, completeUserProfile, getApprovedVenue, getOrganizerEvent, getRegistrationNotificationDataByOrder, localAuthorityModerateEvent, markOrganizerVenueAvailabilityNotificationRead, markRegistrationConfirmationSent, moderateAuthorityCapabilityEvent, recordUserSignIn, registerForEvent, rejectManualPayment, replaceQuestions, replaceTickets, resolveAuthorityException, resolveWorkspaceLandingPath, saveCapabilityApplication, saveCsrCapabilityProfile, saveWorkspaceLandingPreference, setParticipantHealthConsent, submitCapabilityApplication, submitEventForApproval, submitManualPaymentProof, subscribeOrganizerToVenueAvailability, toggleEventFavorite, updateEvent, updateRegistrationStatus, updateUserProfile, updateUserPasswordHash } from "./lib/db";
 import { adminCreateCsrMigrationGrant, adminCreateLocalAuthorityMigrationGrant } from "./lib/db";
 import { adminExpireDueCapabilityGrants } from "./lib/db";
 import { markCapabilityDecisionNotificationRead } from "./lib/db";
@@ -13,7 +13,7 @@ import { clearSession, currentUser, hashPassword, setSession, verifyPassword } f
 import { canPublishEvent, canSubmitWizardStep, createEventSlug, hasAuthenticatedAccount, isRegistrationStatus, isValidTicketSaleWindow, nextWizardStep, normalizeTicketGst } from "./lib/workflow";
 import { sendOrganizerParticipationConfirmation, sendRegistrationConfirmation } from "./lib/email";
 import { normalizeFillingFastThreshold } from "./lib/registration-status";
-import { isAdministrator, isCsrSponsor, isLocalAuthority } from "./lib/admin";
+import { isAdministrator, isCsrSponsor, isDistrictAuthority, isLocalAuthority, isStateAuthority } from "./lib/admin";
 import { canEditEventForModeration, normalizePlatformFeePercent } from "./lib/moderation";
 import { coordinateToE6, normalizeLocationText } from "./lib/location";
 import { parseVenueCsv } from "./lib/venue-csv";
@@ -33,10 +33,12 @@ function safeReturnTo(value: FormDataEntryValue | null, fallback = "/dashboard/m
 
 const NEW_DRAFT_PATH = "/dashboard/manage-events/create-event/new";
 
-async function redirectAfterAuthentication(user: { id: number; role: "user" | "admin" | "mcd" | "csr" }, returnTo: FormDataEntryValue | null) {
+async function redirectAfterAuthentication(user: { id: number; role: "user" | "admin" | "mcd" | "csr" | "state" | "district" }, returnTo: FormDataEntryValue | null) {
 	const destination = safeReturnTo(returnTo);
 	if (isLocalAuthority(user) && !destination.startsWith("/local-authority") && !destination.startsWith("/mcd")) redirect("/local-authority");
 	if (isCsrSponsor(user) && !destination.startsWith("/csr")) redirect("/csr");
+	if (isStateAuthority(user) && !destination.startsWith("/state-authority")) redirect("/state-authority");
+	if (isDistrictAuthority(user) && !destination.startsWith("/district-authority")) redirect("/district-authority");
 	if (!text(returnTo) && user.role === "user") { const preferredPath = await resolveWorkspaceLandingPath(user.id); if (preferredPath) redirect(preferredPath); }
 	redirect(destination);
 }
@@ -46,6 +48,8 @@ async function requireUser(returnTo = "/dashboard/manage-events/events") {
   if (!user || !hasAuthenticatedAccount(user.id)) redirect(`/login?returnTo=${encodeURIComponent(returnTo)}`);
   if (isLocalAuthority(user)) redirect("/local-authority");
   if (isCsrSponsor(user)) redirect("/csr");
+  if (isStateAuthority(user)) redirect("/state-authority");
+  if (isDistrictAuthority(user)) redirect("/district-authority");
   return user;
 }
 
@@ -77,16 +81,16 @@ export async function signupAction(formData: FormData) {
   const user = await createPasswordUser({ name, email, passwordHash: hashPassword(password) });
   if (!user) redirect("/signup?error=We+could+create+your+account.");
   await setSession(user.id);
-  await redirectAfterAuthentication(user, formData.get("returnTo"));
+  redirect("/dashboard/profile");
 }
 
 export async function loginAction(formData: FormData) {
   const email = text(formData.get("email")).toLowerCase();
   const password = text(formData.get("password"));
   const user = await findUserByEmail(email);
-  if (!user?.passwordHash || !verifyPassword(password, user.passwordHash)) redirect("/login?error=The+email+or+password+is+incorrect.");
+  if (!user?.passwordHash || !verifyPassword(password, user.passwordHash)) redirect("/login/email?error=The+email+or+password+is+incorrect.");
   const signedInUser = await recordUserSignIn(user.id);
-  if (!signedInUser) redirect("/login?error=We+could+start+your+session.");
+  if (!signedInUser) redirect("/login/email?error=We+could+start+your+session.");
   await setSession(signedInUser.id);
 	await redirectAfterAuthentication(signedInUser, formData.get("returnTo"));
 }
@@ -196,7 +200,7 @@ export async function adminMasterUpdateAction(formData: FormData) {
   const targetId = Number(text(formData.get("targetId")));
   const value = text(formData.get("value"));
   if (!Number.isInteger(targetId) || targetId < 1 || text(formData.get("confirmation")) !== "MASTER") redirect(`/admin?view=${view}&error=Type+MASTER+to+confirm+the+change.`);
-  if (intent === "user-role" && (value === "user" || value === "admin" || value === "mcd" || value === "csr")) await adminSetUserRole(admin.id, targetId, value);
+  if (intent === "user-role" && (value === "user" || value === "admin" || value === "mcd" || value === "csr" || value === "state" || value === "district")) await adminSetUserRole(admin.id, targetId, value);
   else if (intent === "event-moderation" && (value === "approved" || value === "rejected" || value === "frozen" || value === "suspended" || value === "deleted")) {
     const moderated = await adminModerateEvent(admin.id, targetId, value, text(formData.get("note")), normalizePlatformFeePercent(text(formData.get("platformFeePercent"))));
     if (value === "approved" && moderated.organizerParticipation?.created) {
@@ -245,6 +249,26 @@ export async function adminCreateCsrAccountAction(formData: FormData) {
   if (name.length < 2 || !email.includes("@") || password.length < 8 || companyName.length < 2 || contactName.length < 2 || !contactEmail.includes("@")) redirect("/admin?view=users&error=Complete+the+CSR+account,+company,+contact,+email,+and+password+fields.");
   try { await adminCreateCsrAccount(admin.id, { name, email, passwordHash: hashPassword(password), profile: { companyName, registrationNumber: text(formData.get("registrationNumber")) || null, foundationName: text(formData.get("foundationName")) || null, contactName, contactEmail, contactPhone: text(formData.get("contactPhone")) || null, focusAreas: text(formData.get("focusAreas")) || null } }); } catch (error) { redirect(`/admin?view=users&error=${encodeURIComponent(error instanceof Error ? error.message : "Could not create the CSR sponsor account")}`); }
   revalidatePath("/admin"); redirect("/admin?view=users&updated=CSR+sponsor+account+created+and+recorded+in+the+audit+log.");
+}
+
+export async function adminCreateStateAccountAction(formData: FormData) {
+  const admin = await requireAdministratorAction("/admin?view=users");
+  const name = text(formData.get("name")); const email = text(formData.get("email")).toLowerCase(); const password = text(formData.get("password"));
+  if (text(formData.get("confirmation")) !== "MASTER") redirect("/admin?view=users&error=Type+MASTER+to+create+a+State+Authority+account.");
+  if (name.length < 2 || !email.includes("@") || password.length < 8) redirect("/admin?view=users&error=Enter+a+name,+valid+email,+and+an+8-character+password+for+the+State+Authority+account.");
+  try { await adminCreateStateAccount(admin.id, { name, email, passwordHash: hashPassword(password) }); } catch (error) { redirect(`/admin?view=users&error=${encodeURIComponent(error instanceof Error ? error.message : "Could not create the State Authority account")}`); }
+  revalidatePath("/admin");
+  redirect("/admin?view=users&updated=State+Authority+account+created+and+recorded+in+the+audit+log.");
+}
+
+export async function adminCreateDistrictAccountAction(formData: FormData) {
+  const admin = await requireAdministratorAction("/admin?view=users");
+  const name = text(formData.get("name")); const email = text(formData.get("email")).toLowerCase(); const password = text(formData.get("password"));
+  if (text(formData.get("confirmation")) !== "MASTER") redirect("/admin?view=users&error=Type+MASTER+to+create+a+District+Authority+account.");
+  if (name.length < 2 || !email.includes("@") || password.length < 8) redirect("/admin?view=users&error=Enter+a+name,+valid+email,+and+an+8-character+password+for+the+District+Authority+account.");
+  try { await adminCreateDistrictAccount(admin.id, { name, email, passwordHash: hashPassword(password) }); } catch (error) { redirect(`/admin?view=users&error=${encodeURIComponent(error instanceof Error ? error.message : "Could not create the District Authority account")}`); }
+  revalidatePath("/admin");
+  redirect("/admin?view=users&updated=District+Authority+account+created+and+recorded+in+the+audit+log.");
 }
 
 async function requireLocalAuthorityAction(returnTo = "/local-authority") {
@@ -755,6 +779,36 @@ export async function updateProfileAction(formData: FormData) {
   redirect("/dashboard/profile?updated=1");
 }
 
+export async function updateExtendedProfileAction(formData: FormData) {
+  const user = await requireUser("/dashboard/profile");
+  try {
+    const name = text(formData.get("name"));
+    if (name.length < 2) redirect("/dashboard/profile?error=Enter+a+name+with+at+least+two+characters.");
+    const gender = text(formData.get("gender")) || null;
+    const dateOfBirth = text(formData.get("dateOfBirth")) || null;
+    const state = text(formData.get("state")) || null;
+    const city = text(formData.get("city")) || null;
+    const interestsRaw = text(formData.get("interests"));
+    const eventFormatRaw = text(formData.get("eventFormat"));
+    const eventFrequency = text(formData.get("eventFrequency")) || null;
+    const avatarUrl = text(formData.get("avatarUrl")) || null;
+    const interests = interestsRaw ? interestsRaw.split(",").filter(Boolean) : null;
+    const eventFormat = eventFormatRaw ? eventFormatRaw.split(",").filter(Boolean) : null;
+    const notificationPrefs = {
+      email: text(formData.get("notifEmail")) !== "false",
+      push: text(formData.get("notifPush")) !== "false",
+      sms: text(formData.get("notifSms")) !== "false",
+    };
+    await completeUserProfile(user.id, { name, gender, dateOfBirth, state, city, interests, eventFormat, eventFrequency, notificationPrefs, avatarUrl });
+  } catch (error) {
+    console.error("[Profile] Extended update failed", error);
+    redirect("/dashboard/profile?error=Could+not+save+profile.+Please+try+again.");
+  }
+  revalidatePath("/dashboard/profile");
+  revalidatePath("/dashboard/my-bookings");
+  redirect("/dashboard/profile?updated=1");
+}
+
 export async function createPromotionAction(formData: FormData) {
   const user = await requireUser();
   const eventId = Number(text(formData.get("eventId")));
@@ -770,4 +824,105 @@ export async function updateRegistrationAction(formData: FormData) {
   if (!isRegistrationStatus(status)) return;
   await updateRegistrationStatus(eventId, registrationId, user.id, status);
   revalidatePath(`/dashboard/attendees?eventId=${eventId}`);
+}
+
+// ─── OTP Signup Actions ──────────────────────────────────────────────
+
+export async function requestSignupOtp(formData: FormData) {
+  const phone = text(formData.get("phone")).replace(/\s+/g, "");
+  if (!/^\+?\d{10,13}$/.test(phone)) return { error: "Enter a valid phone number with country code." };
+  const existing = await findUserByPhone(phone);
+  if (existing) return { error: "An account with this phone number already exists." };
+  const { createOtp } = await import("./lib/otp");
+  const { sendSms, buildOtpMessage } = await import("./lib/sms");
+  const code = await createOtp(phone, "signup");
+  const result = await sendSms(phone, buildOtpMessage(code, "signup"));
+  if (!result.success) return { error: "Failed to send OTP. Please try again." };
+  return { ok: true, phone };
+}
+
+export async function verifySignupOtp(formData: FormData) {
+  const phone = text(formData.get("phone")).replace(/\s+/g, "");
+  const code = text(formData.get("code"));
+  if (!phone || !code) return { error: "Phone and code are required." };
+  const { verifyOtp } = await import("./lib/otp");
+  const valid = await verifyOtp(phone, code, "signup");
+  if (!valid) return { error: "The OTP is invalid or has expired." };
+  const user = await createPhoneUser(phone);
+  if (!user) return { error: "Could not create your account." };
+  await setSession(user.id);
+  return { ok: true, redirect: "/dashboard/profile" };
+}
+
+// ─── OTP Login Actions ───────────────────────────────────────────────
+
+export async function requestLoginOtp(formData: FormData) {
+  const phone = text(formData.get("phone")).replace(/\s+/g, "");
+  if (!/^\+?\d{10,13}$/.test(phone)) return { error: "Enter a valid phone number with country code." };
+  const existing = await findUserByPhone(phone);
+  if (!existing) return { error: "No account found with this phone number." };
+  const { createOtp } = await import("./lib/otp");
+  const { sendSms, buildOtpMessage } = await import("./lib/sms");
+  const code = await createOtp(phone, "login");
+  const result = await sendSms(phone, buildOtpMessage(code, "login"));
+  if (!result.success) return { error: "Failed to send OTP. Please try again." };
+  return { ok: true, phone };
+}
+
+export async function verifyLoginOtp(formData: FormData) {
+  const phone = text(formData.get("phone")).replace(/\s+/g, "");
+  const code = text(formData.get("code"));
+  const returnTo = text(formData.get("returnTo"));
+  if (!phone || !code) return { error: "Phone and code are required." };
+  const { verifyOtp } = await import("./lib/otp");
+  const valid = await verifyOtp(phone, code, "login");
+  if (!valid) return { error: "The OTP is invalid or has expired." };
+  const user = await findUserByPhone(phone);
+  if (!user) return { error: "Account not found." };
+  const signedInUser = await recordUserSignIn(user.id);
+  if (!signedInUser) return { error: "Could not start your session." };
+  await setSession(signedInUser.id);
+  return { ok: true, redirect: returnTo || "/dashboard/manage-events/events" };
+}
+
+// ─── Forgot / Reset / Change Password Actions ────────────────────────
+
+export async function forgotPasswordAction(formData: FormData) {
+  const email = text(formData.get("email")).toLowerCase();
+  if (!email.includes("@")) return { error: "Enter a valid email address." };
+  const user = await findUserByEmail(email);
+  if (!user) return { ok: true, message: "If an account with that email exists, a reset link has been sent." };
+  const { createPasswordResetToken, sendPasswordResetEmail } = await import("./lib/password-reset");
+  const token = await createPasswordResetToken(user.id);
+  await sendPasswordResetEmail(email, token);
+  return { ok: true, message: "If an account with that email exists, a reset link has been sent." };
+}
+
+export async function resetPasswordAction(formData: FormData) {
+  const token = text(formData.get("token"));
+  const email = text(formData.get("email")).toLowerCase();
+  const password = text(formData.get("password"));
+  const confirmPassword = text(formData.get("confirmPassword"));
+  if (!token || !email) return { error: "Invalid reset link." };
+  if (password.length < 8) return { error: "Password must be at least 8 characters." };
+  if (password !== confirmPassword) return { error: "Passwords do not match." };
+  const user = await findUserByEmail(email);
+  if (!user) return { error: "Invalid reset link." };
+  const { verifyPasswordResetToken } = await import("./lib/password-reset");
+  const valid = await verifyPasswordResetToken(user.id, token);
+  if (!valid) return { error: "The reset link is invalid or has expired." };
+  await updateUserPasswordHash(user.id, hashPassword(password));
+  return { ok: true, message: "Your password has been updated.", redirect: "/login" };
+}
+
+export async function changePasswordAction(formData: FormData) {
+  const user = await requireUser("/dashboard/change-password");
+  const currentPassword = text(formData.get("currentPassword"));
+  const newPassword = text(formData.get("newPassword"));
+  const confirmPassword = text(formData.get("confirmPassword"));
+  if (!user.passwordHash || !verifyPassword(currentPassword, user.passwordHash)) redirect("/dashboard/change-password?error=The+current+password+is+incorrect.");
+  if (newPassword.length < 8) redirect("/dashboard/change-password?error=The+new+password+must+be+at+least+8+characters.");
+  if (newPassword !== confirmPassword) redirect("/dashboard/change-password?error=The+passwords+do+not+match.");
+  await updateUserPasswordHash(user.id, hashPassword(newPassword));
+  redirect("/dashboard/change-password?updated=1");
 }

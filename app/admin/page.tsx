@@ -1,34 +1,32 @@
 import Link from "next/link";
-import { BadgeIndianRupee, CalendarDays, CircleAlert, CreditCard, Download, FileSpreadsheet, FileText, KeyRound, MapPinned, ShieldCheck, TicketCheck, UsersRound } from "lucide-react";
+import { BadgeIndianRupee, CalendarDays, CircleAlert, CreditCard, Download, FileSpreadsheet, FileText, MapPinned, ShieldCheck, TicketCheck, UsersRound } from "lucide-react";
 import { EventModerationControl, MasterControl, MasterControlNote } from "../components/AdminMasterControl";
 import AdminAnalytics from "../components/AdminAnalytics";
 import AdminVenueDirectory from "../components/AdminVenueDirectory";
 import AdminMcdProvisioner from "../components/AdminMcdProvisioner";
 import AdminCsrManagement from "../components/AdminCsrManagement";
 import AdminCsrProvisioner from "../components/AdminCsrProvisioner";
-import AdminCapabilityManagement from "../components/AdminCapabilityManagement";
+import AdminStateProvisioner from "../components/AdminStateProvisioner";
+import AdminDistrictProvisioner from "../components/AdminDistrictProvisioner";
 import AdminDataAuditDashboard from "../components/AdminDataAuditDashboard";
 import AdminGatewayFeeSettings from "../components/AdminGatewayFeeSettings";
 import AdminShell from "../components/AdminShell";
-import { getAdminCapabilityGovernanceData, getAdminCapabilityGrantUsageReport, getAdminCsrAssignmentTimeline, getAdminCsrWorkspaceData, getAdminDataAuditData, getAdminWorkspaceData, getPlatformSettings } from "../lib/db";
-import { isCapabilityCatalogEnabled, isCapabilityGrantUsageReportingEnabled } from "../lib/capability-feature";
+import { getAdminCsrAssignmentTimeline, getAdminCsrWorkspaceData, getAdminDataAuditData, getAdminWorkspaceData, getPlatformSettings } from "../lib/db";
 import { effectiveModerationStatus, moderationLabel } from "../lib/moderation";
 
 const money = (value: number) => `₹${(value / 100).toLocaleString("en-IN")}`;
 const readable = (value: string) => value.replaceAll("_", " ");
-const userRoleOptions = [{ value: "user", label: "Standard user" }, { value: "mcd", label: "Local Authority" }, { value: "csr", label: "CSR sponsor" }, { value: "admin", label: "Administrator" }];
+const userRoleOptions = [{ value: "user", label: "Standard user" }, { value: "mcd", label: "Local Authority" }, { value: "csr", label: "CSR sponsor" }, { value: "state", label: "State Authority" }, { value: "district", label: "District Authority" }, { value: "admin", label: "Administrator" }];
 const registrationStatusOptions = [{ value: "confirmed", label: "Confirmed" }, { value: "cancelled", label: "Cancelled" }, { value: "checked_in", label: "Checked in" }];
 const paymentStatusOptions = [{ value: "not_required", label: "Not required" }, { value: "pending", label: "Pending" }, { value: "paid", label: "Paid" }, { value: "failed", label: "Failed" }, { value: "refunded", label: "Refunded" }];
 const promotionStatusOptions = [{ value: "draft", label: "Draft" }, { value: "scheduled", label: "Scheduled" }, { value: "active", label: "Active" }, { value: "completed", label: "Completed" }];
-const views = ["overview", "users", "events", "payments", "venues", "csr", "capabilities", "reports", "settings", "data-audit", "audit"] as const;
+const views = ["overview", "users", "events", "payments", "venues", "csr", "reports", "settings", "data-audit", "audit"] as const;
 const queryDate = (value: string | undefined) => /^\d{4}-\d{2}-\d{2}$/.test(value || "") && !Number.isNaN(new Date(`${value}T00:00:00.000Z`).getTime()) ? new Date(`${value}T00:00:00.000Z`) : null;
 
-export default async function AdminPage({ searchParams }: { searchParams: Promise<{ view?: string; error?: string; updated?: string; reviewStatus?: string; reviewCapability?: string; reviewApplicant?: string; reviewGeography?: string; reviewFrom?: string; reviewTo?: string; auditPaymentStatus?: string; auditFrom?: string; auditTo?: string }> }) {
+export default async function AdminPage({ searchParams }: { searchParams: Promise<{ view?: string; error?: string; updated?: string; auditPaymentStatus?: string; auditFrom?: string; auditTo?: string }> }) {
   const query = await searchParams;
-  const requestedView = views.includes(query.view as typeof views[number]) ? query.view as typeof views[number] : "overview";
-	const capabilityCatalogEnabled = isCapabilityCatalogEnabled(); const grantUsageReportingEnabled = isCapabilityGrantUsageReportingEnabled();
-  const view = !capabilityCatalogEnabled && requestedView === "capabilities" ? "overview" : requestedView;
-		const [data, csrData, capabilityData, grantUsage, csrTimeline, settings, dataAudit] = await Promise.all([getAdminWorkspaceData(), getAdminCsrWorkspaceData(), getAdminCapabilityGovernanceData({ status: query.reviewStatus, capability: query.reviewCapability, applicant: query.reviewApplicant, geography: query.reviewGeography, requestedFrom: queryDate(query.reviewFrom), requestedTo: queryDate(query.reviewTo) }), grantUsageReportingEnabled ? getAdminCapabilityGrantUsageReport() : Promise.resolve([]), getAdminCsrAssignmentTimeline(), getPlatformSettings(), getAdminDataAuditData({ paymentStatus: query.auditPaymentStatus, from: queryDate(query.auditFrom), to: queryDate(query.auditTo) })]);
+  const view = views.includes(query.view as typeof views[number]) ? query.view as typeof views[number] : "overview";
+  const [data, csrData, csrTimeline, settings, dataAudit] = await Promise.all([getAdminWorkspaceData(), getAdminCsrWorkspaceData(), getAdminCsrAssignmentTimeline(), getPlatformSettings(), getAdminDataAuditData({ paymentStatus: query.auditPaymentStatus, from: queryDate(query.auditFrom), to: queryDate(query.auditTo) })]);
   const checkedIn = data.registrations.filter(row => row.registration.status === "checked_in").length;
   const paid = data.registrations.filter(row => row.registration.paymentStatus === "paid").length;
   const totalCapacity = data.tickets.reduce((sum, ticket) => sum + ticket.quantityLimit, 0);
@@ -46,7 +44,7 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
 
   return <AdminShell active={view}>
     <div className="dash-page-head">
-      <div><span className="eyebrow"><ShieldCheck size={13} /> Guarded master administration</span><h1 className="page-title">{view === "overview" ? "Master Administrator Console" : view === "csr" ? "CSR Sponsorship Governance" : view === "capabilities" ? "Capability Governance" : view === "settings" ? "Gateway Fee Settings" : view === "data-audit" ? "Transaction and Role Audit" : `Master ${view[0].toUpperCase()}${view.slice(1)}`}</h1><p>Review submissions, control event availability, assign platform fees, and track the platform through audit-backed operations.</p></div>
+      <div><span className="eyebrow"><ShieldCheck size={13} /> Guarded master administration</span><h1 className="page-title">{view === "overview" ? "Master Administrator Console" : view === "csr" ? "CSR Sponsorship Governance" : view === "settings" ? "Gateway Fee Settings" : view === "data-audit" ? "Transaction and Role Audit" : `Master ${view[0].toUpperCase()}${view.slice(1)}`}</h1><p>Review submissions, control event availability, assign platform fees, and track the platform through audit-backed operations.</p></div>
       <div className="dash-head-actions"><Link href="/api/exports/admin?format=xlsx" className="btn btn-outline"><FileSpreadsheet size={15} /> XLSX report</Link><Link href="/api/exports/admin?format=pdf" className="btn btn-outline"><FileText size={15} /> PDF report</Link></div>
     </div>
     {query.error ? <div className="error-note" role="alert">{query.error}</div> : null}
@@ -59,7 +57,7 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
       <section className="panel"><div className="section-head"><div><h3>Recent master activity</h3><p>Latest confirmed administrative actions, including event review and venue-directory changes.</p></div><Link className="text-button" href="/admin?view=audit">Open full audit log</Link></div><AuditTable rows={data.audits.slice(0, 8)} /></section>
     </> : null}
 
-    {view === "users" ? <><AdminMcdProvisioner /><AdminCsrProvisioner /><section className="panel"><h3>Accounts and master roles</h3><MasterControlNote /><div className="admin-table-wrap"><table className="admin-table"><thead><tr><th>Account</th><th>Public ID</th><th>Role</th><th>Created</th><th>Guarded action</th></tr></thead><tbody>{data.users.map(user => <tr key={user.id}><td><b>{user.name || "Unnamed account"}</b><br /><small>{user.email || "No email"}</small></td><td>{user.publicId}</td><td><span className={`status-pill ${user.role === "admin" ? "live" : user.role === "mcd" || user.role === "csr" ? "submitted" : "draft"}`}>{user.role === "mcd" ? "Local Authority" : user.role}</span></td><td>{new Date(user.createdAt).toLocaleDateString("en-IN")}</td><td><MasterControl view="users" intent="user-role" targetId={user.id} currentValue={user.role} options={userRoleOptions} /></td></tr>)}</tbody></table></div></section></> : null}
+    {view === "users" ? <><AdminMcdProvisioner /><AdminCsrProvisioner /><AdminStateProvisioner /><AdminDistrictProvisioner /><section className="panel"><h3>Accounts and master roles</h3><MasterControlNote /><div className="admin-table-wrap"><table className="admin-table"><thead><tr><th>Account</th><th>Public ID</th><th>Role</th><th>Created</th><th>Guarded action</th></tr></thead><tbody>{data.users.map(user => <tr key={user.id}><td><b>{user.name || "Unnamed account"}</b><br /><small>{user.email || "No email"}</small></td><td>{user.publicId}</td><td><span className={`status-pill ${user.role === "admin" ? "live" : user.role === "mcd" || user.role === "csr" || user.role === "state" || user.role === "district" ? "submitted" : "draft"}`}>{user.role === "mcd" ? "Local Authority" : user.role === "state" ? "State Authority" : user.role === "district" ? "District Authority" : user.role}</span></td><td>{new Date(user.createdAt).toLocaleDateString("en-IN")}</td><td><MasterControl view="users" intent="user-role" targetId={user.id} currentValue={user.role} options={userRoleOptions} /></td></tr>)}</tbody></table></div></section></> : null}
 
     {view === "events" ? <section className="panel"><div className="section-head"><div><h3>Submission queue and lifecycle control</h3><p>Approve to make an event live. Request changes, freeze, suspend, or remove it with organizer-facing guidance. Set the event platform fee during the same confirmed decision.</p></div><span className="status-pill submitted">{data.metrics.awaitingApproval} awaiting approval</span></div><MasterControlNote /><div className="admin-table-wrap"><table className="admin-table moderation-table"><thead><tr><th>Event</th><th>Organizer</th><th>Moderation</th><th>Platform fee</th><th>Ticket volume</th><th>Guarded decision</th></tr></thead><tbody>{data.events.map(({ event, organizer, category }) => { const eventTickets = data.tickets.filter(ticket => ticket.eventId === event.id); const capacity = eventTickets.reduce((sum, ticket) => sum + ticket.quantityLimit, 0); const sold = eventTickets.reduce((sum, ticket) => sum + ticket.quantitySold, 0); const moderation = effectiveModerationStatus(event); return <tr key={event.id}><td><b>{event.displayName}</b><br /><small>{category?.name || "Uncategorized"} · {event.city || "City pending"}</small>{event.moderationNote ? <small className="table-note">Latest note: {event.moderationNote}</small> : null}</td><td>{organizer.name || organizer.email || `User #${organizer.id}`}</td><td><span className={`status-pill ${moderation}`}>{moderationLabel(moderation)}</span><br /><small>{event.submittedAt ? `Submitted ${new Date(event.submittedAt).toLocaleDateString("en-IN")}` : event.status}</small></td><td><b>{event.platformFeePercent}%</b><br /><small>per paid ticket</small></td><td>{sold} sold / {capacity}</td><td><EventModerationControl targetId={event.id} currentValue={moderation} platformFeePercent={event.platformFeePercent} /></td></tr>; })}</tbody></table></div></section> : null}
 
@@ -68,8 +66,6 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
     {view === "venues" ? <AdminVenueDirectory venues={data.venues} reservations={data.venueReservations} requests={data.venueRequests} /> : null}
 
 	    {view === "csr" ? <AdminCsrManagement data={csrData} timeline={csrTimeline} /> : null}
-
-		{view === "capabilities" && capabilityCatalogEnabled ? <AdminCapabilityManagement data={capabilityData} grantUsage={grantUsage} /> : null}
 
     {view === "settings" ? <AdminGatewayFeeSettings settings={settings} /> : null}
 

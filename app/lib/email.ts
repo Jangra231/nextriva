@@ -64,6 +64,16 @@ export async function sendRegistrationConfirmation(input: { attendeeEmail?: stri
   });
 }
 
+export async function sendEmail(message: { to: string; subject: string; text: string; html: string }): Promise<boolean> {
+  try {
+    await deliver(message);
+    return true;
+  } catch (error) {
+    console.error("[Email Error]", error);
+    return false;
+  }
+}
+
 export async function sendAttendeeReminder(input: { attendeeEmail?: string | null; attendeeName?: string | null; eventName: string; venue?: string | null; city?: string | null; startsAt: Date | string | null; eventUrl: string }) {
   if (!input.attendeeEmail) return;
   const starts = formatDate(input.startsAt);

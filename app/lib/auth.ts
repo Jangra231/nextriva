@@ -48,3 +48,5 @@ export async function currentUser() {
 export function initials(name: string | null) {
   return (name || "F").split(" ").map(part => part[0]).join("").slice(0, 2).toUpperCase();
 }
+
+

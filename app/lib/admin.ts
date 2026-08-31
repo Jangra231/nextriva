@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { currentUser } from "./auth";
 
-export type PlatformRole = "user" | "admin" | "mcd" | "csr";
+export type PlatformRole = "user" | "admin" | "mcd" | "csr" | "state" | "district";
 export const LOCAL_AUTHORITY_CAPABILITY = "LOCAL_AUTHORITY" as const;
 export const LOCAL_AUTHORITY_LABEL = "Local Authority";
 export const LOCAL_AUTHORITY_TERMINOLOGY_ENABLED = process.env.FITIZEN_LOCAL_AUTHORITY_TERMINOLOGY !== "false";
@@ -67,5 +67,27 @@ export async function requireCsrSponsor(returnTo = "/csr") {
   const user = await currentUser();
   if (!user) redirect(`/csr/login?returnTo=${encodeURIComponent(returnTo)}`);
   if (!isCsrSponsor(user)) redirect("/csr/login?error=CSR+sponsor+access+is+required.");
+  return user;
+}
+
+export function isStateAuthority(user: { role: PlatformRole } | null | undefined) {
+  return user?.role === "state";
+}
+
+export function isDistrictAuthority(user: { role: PlatformRole } | null | undefined) {
+  return user?.role === "district";
+}
+
+export async function requireStateAuthority(returnTo = "/state-authority") {
+  const user = await currentUser();
+  if (!user) redirect(`/state-authority/login?returnTo=${encodeURIComponent(returnTo)}`);
+  if (!isStateAuthority(user)) redirect("/state-authority/login?error=State+Authority+access+is+required.");
+  return user;
+}
+
+export async function requireDistrictAuthority(returnTo = "/district-authority") {
+  const user = await currentUser();
+  if (!user) redirect(`/district-authority/login?returnTo=${encodeURIComponent(returnTo)}`);
+  if (!isDistrictAuthority(user)) redirect("/district-authority/login?error=District+Authority+access+is+required.");
   return user;
 }

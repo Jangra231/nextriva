@@ -21,11 +21,41 @@ export const users = mysqlTable("users", {
   passwordHash: varchar("passwordHash", { length: 255 }),
   loginMethod: varchar("loginMethod", { length: 64 }),
   avatarUrl: varchar("avatarUrl", { length: 1024 }),
-  role: mysqlEnum("role", ["user", "admin", "mcd", "csr"]).default("user").notNull(),
+  role: mysqlEnum("role", ["user", "admin", "mcd", "csr", "state", "district"]).default("user").notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
   lastSignedIn: timestamp("lastSignedIn").defaultNow().notNull(),
+  phone: varchar("phone", { length: 20 }).unique(),
+  gender: varchar("gender", { length: 20 }),
+  dateOfBirth: varchar("dateOfBirth", { length: 10 }),
+  state: varchar("state", { length: 80 }),
+  city: varchar("city", { length: 80 }),
+  interests: json("interests").$type<string[]>(),
+  eventFormat: json("eventFormat").$type<string[]>(),
+  eventFrequency: varchar("eventFrequency", { length: 40 }),
+  notificationPrefs: json("notificationPrefs").$type<{ email: boolean; push: boolean; sms: boolean }>(),
+  profileCompleted: boolean("profileCompleted").default(false).notNull(),
+  phoneVerified: boolean("phoneVerified").default(false).notNull(),
 });
+
+export const otpVerifications = mysqlTable("otpVerifications", {
+  id: int("id").autoincrement().primaryKey(),
+  phone: varchar("phone", { length: 20 }).notNull(),
+  codeHash: varchar("codeHash", { length: 255 }).notNull(),
+  purpose: mysqlEnum("purpose", ["signup", "login", "password_reset"]).notNull(),
+  expiresAt: timestamp("expiresAt").notNull(),
+  consumedAt: timestamp("consumedAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+}, table => [index("otp_phone_purpose_idx").on(table.phone, table.purpose)]);
+
+export const passwordResets = mysqlTable("passwordResets", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  tokenHash: varchar("tokenHash", { length: 255 }).notNull(),
+  expiresAt: timestamp("expiresAt").notNull(),
+  consumedAt: timestamp("consumedAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+}, table => [index("pwd_reset_user_idx").on(table.userId)]);
 
 export const authorityTerminologyMappings = mysqlTable(
   "authorityTerminologyMappings",
