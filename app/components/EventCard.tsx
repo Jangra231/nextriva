@@ -14,8 +14,9 @@ type EventCardProps = {
   registration?: RegistrationCapacity;
 };
 
+const MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 function dateText(value: Date | string | null) {
-  return value ? new Intl.DateTimeFormat("en-IN", { day: "2-digit", month: "short", year: "numeric" }).format(new Date(value)) : "Date to be confirmed";
+  return value ? `${new Date(value).getUTCDate()} ${MONTHS[new Date(value).getUTCMonth()]} ${new Date(value).getUTCFullYear()}` : "Date to be confirmed";
 }
 
 export default function EventCard({ event, category, adminHref, origin, registration }: EventCardProps) {

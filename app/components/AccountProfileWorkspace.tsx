@@ -24,7 +24,9 @@ export default async function AccountProfileWorkspace({ searchParams }: { search
   const accountType = profile?.accountType || "USER";
 
   const avatarSrc = user.avatarUrl || generateInitialsAvatar(user.name);
-  const joinedDate = new Date(user.createdAt).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" });
+  const utcDate = new Date(user.createdAt);
+  const MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+  const joinedDate = `${utcDate.getUTCDate()} ${MONTHS[utcDate.getUTCMonth()]} ${utcDate.getUTCFullYear()}`;
 
   /* Summary badges derived from saved profile data */
   const interestLabels = (user.interests || []).map(id => INTERESTS.find(i => i.id === id)?.label).filter(Boolean);
@@ -74,7 +76,7 @@ export default async function AccountProfileWorkspace({ searchParams }: { search
           </div>
 
           <p className="profile-meta"><BadgeCheck size={14} aria-hidden="true" /> Joined {joinedDate}</p>
-          <p className="profile-meta"><CalendarDays size={14} aria-hidden="true" /> Member since {new Date(user.createdAt).getFullYear()}</p>
+          <p className="profile-meta"><CalendarDays size={14} aria-hidden="true" /> Member since {utcDate.getUTCFullYear()}</p>
 
           <ProfileSummaryChips interestLabels={interestLabels} formatLabels={formatLabels} freqLabel={freqLabel} />
         </section>
