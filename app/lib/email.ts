@@ -26,7 +26,18 @@ async function deliver(message: MailMessage) {
   return info;
 }
 
-const formatDate = (value: Date | string | null) => value ? new Intl.DateTimeFormat("en-IN", { dateStyle: "full", timeStyle: "short" }).format(new Date(value)) : "To be confirmed";
+const MONTHS = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+const WEEKDAYS = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+const formatDate = (value: Date | string | null) => {
+  if (!value) return "To be confirmed";
+  const d = new Date(value);
+  const hours = d.getUTCHours();
+  const minutes = d.getUTCMinutes();
+  const ampm = hours >= 12 ? "PM" : "AM";
+  const displayHours = hours % 12 || 12;
+  const timeStr = `${String(displayHours).padStart(2, "0")}:${String(minutes).padStart(2, "0")} ${ampm}`;
+  return `${WEEKDAYS[d.getUTCDay()]}, ${d.getUTCDate()} ${MONTHS[d.getUTCMonth()]} ${d.getUTCFullYear()}, ${timeStr}`;
+};
 
 export async function sendOrganizerPublicationConfirmation(input: { organizerEmail?: string | null; organizerName?: string | null; eventName: string; startsAt: Date | string | null; eventUrl: string }) {
   if (!input.organizerEmail) return;

@@ -17,7 +17,7 @@ describe("selected venue calendar status contracts", () => {
     expect(calendar).toContain("slotStart < endOf(item) && slotEnd > new Date(item.startsAt)");
     expect(calendar).toContain("styles.slotReserved : styles.slotAvailable");
     expect(calendar).toContain("Green timeline slots are available; red timeline slots are reserved");
-    expect(calendar).toContain("setSelectedDay(new Date(start.getFullYear(), start.getMonth(), start.getDate()))");
+    expect(calendar).toContain("setSelectedDay(new Date(Date.UTC(start.getUTCFullYear(), start.getUTCMonth(), start.getUTCDate())))");
   });
 
   it("returns an organizer to the exact reserved venue calendar after the server conflict warning", () => {
