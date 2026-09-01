@@ -1474,7 +1474,93 @@ export async function adminSeedSampleVenues(adminId: number) {
     { zone: "Sample Zone North", ward: "Sample Ward 01", location: "Sample Sports Precinct", venueName: "Sample · Riverfront Activity Ground", city: "Noida", address: "Sample verification venue — Sector 62 access gate", sector: "Sector 62", area: "Sample directory data", latitudeE6: 28535516, longitudeE6: 77391026, setting: "outdoor", capacity: 1200, isAccessible: true, accessibilityNotes: "Sample: step-free entry and accessible washroom", active: true },
     { zone: "Sample Zone Central", ward: "Sample Ward 08", location: "Sample Civic Centre", venueName: "Sample · Civic Indoor Hall", city: "Noida", address: "Sample verification venue — Civic Centre block", sector: "Sector 18", area: "Sample directory data", latitudeE6: 28570000, longitudeE6: 77320000, setting: "indoor", capacity: 450, isAccessible: true, accessibilityNotes: "Sample: lift access and reserved seating", active: true },
     { zone: "Sample Zone East", ward: "Sample Ward 14", location: "Sample Lake Park", venueName: "Sample · Lake Park Amphitheatre", city: "Noida", address: "Sample verification venue — east park entrance", sector: "Sector 50", area: "Sample directory data", latitudeE6: 28560000, longitudeE6: 77365000, setting: "outdoor", capacity: 800, isAccessible: false, accessibilityNotes: null, active: true },
+    { zone: "Sample Zone South", ward: "Sample Ward 22", location: "Sample Convention Centre", venueName: "Sample · Convention Centre Hall", city: "New Delhi", address: "Sample venue — Pragati Maidan access gate", sector: "Pragati Maidan", area: "Central Delhi", latitudeE6: 28616800, longitudeE6: 77243300, setting: "indoor", capacity: 2000, isAccessible: true, accessibilityNotes: "Sample: wheelchair ramps, accessible lifts and reserved seating", active: true },
+    { zone: "Sample Zone West", ward: "Sample Ward 31", location: "Sample Marina Promenade", venueName: "Sample · Marina Bay Running Track", city: "Mumbai", address: "Sample venue — Marine Drive promenade", sector: "Marine Drive", area: "South Mumbai", latitudeE6: 18943100, longitudeE6: 72823300, setting: "outdoor", capacity: 1500, isAccessible: false, accessibilityNotes: null, active: true },
+    { zone: "Sample Zone Tech", ward: "Sample Ward 40", location: "Sample IT Park Grounds", venueName: "Sample · TechPark Open Arena", city: "Bengaluru", address: "Sample venue — Whitefield main road", sector: "Whitefield", area: "East Bengaluru", latitudeE6: 12969700, longitudeE6: 77750000, setting: "outdoor", capacity: 600, isAccessible: true, accessibilityNotes: "Sample: flat ground with accessible parking", active: true },
+    { zone: "Sample Zone Heritage", ward: "Sample Ward 45", location: "Sample Fort Grounds", venueName: "Sample · Heritage Fort Grounds", city: "Jaipur", address: "Sample venue — near the fort main gate", sector: "Pink City", area: "North Jaipur", latitudeE6: 26985400, longitudeE6: 75852100, setting: "outdoor", capacity: 1000, isAccessible: false, accessibilityNotes: null, active: true },
+    { zone: "Sample Zone Lakeside", ward: "Sample Ward 50", location: "Sample Lakeside Pavilion", venueName: "Sample · Lakeside Pavilion", city: "Bengaluru", address: "Sample venue — lakeside promenade", sector: "Ulsoor", area: "Central Bengaluru", latitudeE6: 12977100, longitudeE6: 77627100, setting: "indoor", capacity: 350, isAccessible: true, accessibilityNotes: "Sample: lift access and accessible restrooms", active: true },
   ]);
+}
+
+export async function adminSeedDemoVenueEvents(adminId: number) {
+  const now = new Date();
+  const startOfDay = (offsetDays: number) => { const d = new Date(now); d.setHours(0, 0, 0, 0); d.setDate(d.getDate() + offsetDays); return d; };
+  const at = (day: Date, hour: number) => { const d = new Date(day); d.setHours(hour, 0, 0, 0); return d; };
+
+  const sampleVenues = await db().select().from(approvedVenues).where(and(like(approvedVenues.venueName, "Sample · %"), eq(approvedVenues.active, true))).orderBy(asc(approvedVenues.id));
+  const venueByCity: Record<string, (typeof sampleVenues)[number]> = {};
+  for (const v of sampleVenues) venueByCity[v.venueName] = v;
+  const riverfront = venueByCity["Sample · Riverfront Activity Ground"];
+  const civicHall = venueByCity["Sample · Civic Indoor Hall"];
+  const lakePark = venueByCity["Sample · Lake Park Amphitheatre"];
+  const convention = venueByCity["Sample · Convention Centre Hall"];
+  const marina = venueByCity["Sample · Marina Bay Running Track"];
+  const techPark = venueByCity["Sample · TechPark Open Arena"];
+  const heritage = venueByCity["Sample · Heritage Fort Grounds"];
+  const lakeside = venueByCity["Sample · Lakeside Pavilion"];
+  const requiredVenues = [riverfront, civicHall, lakePark, convention, marina, techPark, heritage, lakeside];
+  if (requiredVenues.some(v => !v)) throw new Error("Load the 8 sample venues before seeding demo venue events.");
+
+  const organizer = (await db().select().from(users).where(eq(users.id, adminId)).limit(1))[0];
+  if (!organizer) throw new Error("Admin organizer account not found.");
+
+  const seeds = [
+    { slug: "demo-venue-event-yoga-park", title: "Demo · Morning Yoga in the Park", displayName: "Demo Yoga Park", venue: riverfront, startsAt: at(startOfDay(3), 6), status: "live", moderationStatus: "approved", publishedAt: new Date() },
+    { slug: "demo-venue-event-civic-food-fest", title: "Demo · Civic Indoor Food Festival", displayName: "Demo Food Fest", venue: civicHall, startsAt: at(startOfDay(8), 11), status: "live", moderationStatus: "approved", publishedAt: new Date() },
+    { slug: "demo-venue-event-lake-park-concert", title: "Demo · Lake Park Evening Concert", displayName: "Demo Lake Concert", venue: lakePark, startsAt: at(startOfDay(12), 18), status: "live", moderationStatus: "approved", publishedAt: new Date() },
+    { slug: "demo-venue-event-convention-summit", title: "Demo · Convention Centre Tech Summit", displayName: "Demo Tech Summit", venue: convention, startsAt: at(startOfDay(20), 9), status: "live", moderationStatus: "submitted", publishedAt: null },
+    { slug: "demo-venue-event-marina-marathon", title: "Demo · Marina Bay Fun Run", displayName: "Demo Fun Run", venue: marina, startsAt: at(startOfDay(25), 6), status: "live", moderationStatus: "approved", publishedAt: new Date() },
+    { slug: "demo-venue-event-techpark-workshop", title: "Demo · TechPark Coding Workshop", displayName: "Demo Workshop", venue: techPark, startsAt: at(startOfDay(30), 10), status: "draft", moderationStatus: "draft", publishedAt: null },
+    { slug: "demo-venue-event-heritage-walk", title: "Demo · Heritage Fort Guided Walk", displayName: "Demo Heritage Walk", venue: heritage, startsAt: at(startOfDay(15), 7), status: "live", moderationStatus: "submitted", publishedAt: null },
+    { slug: "demo-venue-event-lakeside-retreat", title: "Demo · Lakeside Wellness Retreat", displayName: "Demo Wellness", venue: lakeside, startsAt: at(startOfDay(18), 9), status: "draft", moderationStatus: "draft", publishedAt: null },
+  ];
+
+  let created = 0, skipped = 0;
+  for (const seed of seeds) {
+    const exists = await db().select({ id: events.id }).from(events).where(eq(events.slug, seed.slug)).limit(1);
+    if (exists.length) { skipped += 1; continue; }
+    const endsAt = new Date(seed.startsAt); endsAt.setHours(seed.startsAt.getHours() + 4);
+    const venue = seed.venue;
+    const address = [venue.location, venue.sector, venue.area, venue.city].filter(Boolean).join(", ");
+    const insert = await db().insert(events).values({
+      organizerId: adminId,
+      organizerPublicId: organizer.publicId,
+      publicId: createPublicEventId(),
+      title: seed.title,
+      displayName: seed.displayName,
+      slug: seed.slug,
+      visibility: "public" as const,
+      status: seed.status,
+      moderationStatus: seed.moderationStatus,
+      currentStep: 5,
+      startsAt: seed.startsAt,
+      endsAt,
+      timezone: "Asia/Calcutta",
+      locationMode: "address" as const,
+      locationSource: "directory" as const,
+      approvedVenueId: venue.id,
+      city: venue.city,
+      venueName: venue.venueName,
+      addressLine1: venue.location,
+      addressLine2: venue.address || null,
+      address,
+      zone: venue.zone,
+      ward: venue.ward,
+      sector: venue.sector,
+      area: venue.area,
+      latitudeE6: venue.latitudeE6,
+      longitudeE6: venue.longitudeE6,
+      venueSetting: venue.setting,
+      venueCapacity: venue.capacity,
+      venueIsAccessible: venue.isAccessible,
+      venueAccessibilityNotes: venue.accessibilityNotes,
+      publishedAt: seed.publishedAt,
+    } as any);
+    const eventId = Number(insert[0].insertId);
+    await recordAdminAudit(adminId, "demo.venue_event_seeded", "event", eventId, null, { slug: seed.slug, venueName: venue.venueName, approvedVenueId: venue.id, status: seed.status, moderationStatus: seed.moderationStatus, startsAt: seed.startsAt });
+    created += 1;
+  }
+  return { created, skipped, venueCount: sampleVenues.length };
 }
 
 export async function adminReleaseVenueReservation(adminId: number, eventId: number, note: string) {
