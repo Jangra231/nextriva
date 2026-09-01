@@ -154,9 +154,55 @@
 
   .qrVisual {
     justify-self: start;
+    width: 130px;
+    height: 130px;
+    padding: 7px;
+  }
+
+  .qrVisual img {
+    width: 114px !important;
+    height: 114px !important;
   }
 
   .actions {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 400px) {
+  .root,
+  :global(.event-registration-qr.banner).root {
+    margin: 10px !important;
+    padding: 12px !important;
+  }
+
+  .copy h3 {
+    font-size: 18px;
+  }
+
+  .copy p {
+    font-size: 13px;
+  }
+
+  .qrVisual {
+    width: 110px;
+    height: 110px;
+    padding: 6px;
+  }
+
+  .qrVisual img {
+    width: 96px !important;
+    height: 96px !important;
+  }
+
+  .actions {
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+  }
+
+  .actions :global(.event-qr-action) {
+    min-height: 36px;
+    padding: 6px 8px;
+    font-size: 11px;
   }
 }
