@@ -81,7 +81,7 @@ export async function signupAction(formData: FormData) {
   const user = await createPasswordUser({ name, email, passwordHash: hashPassword(password) });
   if (!user) redirect("/signup?error=We+could+create+your+account.");
   await setSession(user.id);
-  redirect("/dashboard/profile");
+  redirect("/onboarding");
 }
 
 export async function loginAction(formData: FormData) {
@@ -859,7 +859,7 @@ export async function verifySignupOtp(formData: FormData) {
   const user = await createPhoneUser(phone);
   if (!user) return { error: "Could not create your account." };
   await setSession(user.id);
-  return { ok: true, redirect: "/dashboard/profile" };
+  return { ok: true, redirect: "/onboarding" };
 }
 
 // ─── OTP Login Actions ───────────────────────────────────────────────
