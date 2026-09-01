@@ -1,5 +1,6 @@
 import { CircleAlert, CircleCheck, Clock3, LockKeyhole, RotateCcw, ShieldOff, Trash2 } from "lucide-react";
 import { moderationLabel, type ModerationStatus } from "../lib/moderation";
+import { formatUTCDateTime } from "../lib/date-format";
 import type { OrganizerApprovalTimelineEntry } from "../lib/db";
 import styles from "./EventModerationPanel.module.css";
 
@@ -16,5 +17,5 @@ const content: Record<ModerationStatus, { title: string; message: string; Icon: 
 export default function EventModerationPanel({ status, note, submittedAt, reviewedAt, timeline = [] }: { status: ModerationStatus; note?: string | null; submittedAt?: Date | string | null; reviewedAt?: Date | string | null; timeline?: OrganizerApprovalTimelineEntry[] }) {
   const { title, message, Icon } = content[status];
   const time = reviewedAt || submittedAt;
-  return <section className={`${styles.panel} ${styles[status]}`} aria-label={`Moderation status: ${moderationLabel(status)}`}><Icon size={20} /><div><span className={styles.eyebrow}>{moderationLabel(status)}</span><h3>{title}</h3><p>{message}</p>{note ? <blockquote className={styles.note}><b>Administrator feedback</b><br />{note}</blockquote> : null}{time ? <small>{status === "submitted" ? "Submitted" : "Last reviewed"} {new Date(time).toLocaleString("en-IN")}</small> : null}<ol className={styles.timeline} aria-label="Event approval timeline">{timeline.map((entry, index) => <li className={entry.status === status && index === timeline.length - 1 ? styles.current : ""} key={`${entry.status}-${entry.occurredAt.toISOString()}-${index}`}><i aria-hidden="true" /><div><b>{entry.label}</b><time dateTime={entry.occurredAt.toISOString()}>{entry.occurredAt.toLocaleString("en-IN")}</time>{entry.note ? <span>{entry.note}</span> : null}</div></li>)}</ol></div></section>;
+  return <section className={`${styles.panel} ${styles[status]}`} aria-label={`Moderation status: ${moderationLabel(status)}`}><Icon size={20} /><div><span className={styles.eyebrow}>{moderationLabel(status)}</span><h3>{title}</h3><p>{message}</p>{note ? <blockquote className={styles.note}><b>Administrator feedback</b><br />{note}</blockquote> : null}{time ? <small>{status === "submitted" ? "Submitted" : "Last reviewed"} {formatUTCDateTime(time)}</small> : null}<ol className={styles.timeline} aria-label="Event approval timeline">{timeline.map((entry, index) => <li className={entry.status === status && index === timeline.length - 1 ? styles.current : ""} key={`${entry.status}-${entry.occurredAt.toISOString()}-${index}`}><i aria-hidden="true" /><div><b>{entry.label}</b><time dateTime={entry.occurredAt.toISOString()}>{formatUTCDateTime(entry.occurredAt)}</time>{entry.note ? <span>{entry.note}</span> : null}</div></li>)}</ol></div></section>;
 }
