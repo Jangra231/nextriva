@@ -281,6 +281,13 @@
       "when": 1788169972283,
       "tag": "0039_calm_sentry",
       "breakpoints": true
+    },
+    {
+      "idx": 40,
+      "version": "5",
+      "when": 1788245183573,
+      "tag": "0040_sturdy_the_hand",
+      "breakpoints": true
     }
   ]
 }

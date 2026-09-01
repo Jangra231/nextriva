@@ -1502,43 +1502,70 @@ export async function adminSetUserRole(adminId: number, userId: number, role: "u
   return after;
 }
 
-export async function adminCreateLocalAuthorityAccount(adminId: number, input: { name: string; email: string; passwordHash: string }) {
+export type AdminProvisionedProfileFields = {
+  designation?: string | null;
+  department?: string | null;
+  state?: string | null;
+  city?: string | null;
+  zone?: string | null;
+  ward?: string | null;
+  areaOfWork?: string | null;
+  notes?: string | null;
+};
+
+function sanitizeProfileFields(input: AdminProvisionedProfileFields) {
+  return {
+    designation: input.designation?.trim().slice(0, 100) || null,
+    department: input.department?.trim().slice(0, 100) || null,
+    state: input.state?.trim().slice(0, 80) || null,
+    city: input.city?.trim().slice(0, 80) || null,
+    zone: input.zone?.trim().slice(0, 80) || null,
+    ward: input.ward?.trim().slice(0, 80) || null,
+    areaOfWork: input.areaOfWork?.trim().slice(0, 200) || null,
+    notes: input.notes?.trim().slice(0, 2000) || null,
+  };
+}
+
+export async function adminCreateLocalAuthorityAccount(adminId: number, input: { name: string; email: string; passwordHash: string } & AdminProvisionedProfileFields) {
   const name = input.name.trim().slice(0, 100); const email = input.email.trim().toLowerCase();
   if (name.length < 2 || !email.includes("@")) throw new Error("Enter an authority name and a valid email");
   if (await findUserByEmail(email)) throw new Error("An account with this email already exists");
   await ensureLocalAuthorityTerminologyMappings();
-  const created = await db().insert(users).values({ publicId: createPublicUserId(), openId: `local-authority-${crypto.randomUUID()}`, name, email, passwordHash: input.passwordHash, loginMethod: "admin-provisioned", role: "mcd", lastSignedIn: new Date() });
+  const profileFields = sanitizeProfileFields(input);
+  const created = await db().insert(users).values({ publicId: createPublicUserId(), openId: `local-authority-${crypto.randomUUID()}`, name, email, passwordHash: input.passwordHash, loginMethod: "admin-provisioned", role: "mcd", lastSignedIn: new Date(), ...profileFields });
   const account = await findUserById(Number(created[0].insertId));
   if (!account) throw new Error("Local Authority account creation failed");
   await ensureUserAccountProfile(account.id);
-  await recordAdminAudit(adminId, "local_authority.account_created", "user", account.id, null, { id: account.id, publicId: account.publicId, email: account.email, legacyRole: account.role, capabilityCode: "LOCAL_AUTHORITY" });
+  await recordAdminAudit(adminId, "local_authority.account_created", "user", account.id, null, { id: account.id, publicId: account.publicId, email: account.email, legacyRole: account.role, capabilityCode: "LOCAL_AUTHORITY", ...profileFields });
   return account;
 }
 
 /** @deprecated Stage 1 compatibility alias. New code must use adminCreateLocalAuthorityAccount. */
 export const adminCreateMcdAccount = adminCreateLocalAuthorityAccount;
 
-export async function adminCreateStateAccount(adminId: number, input: { name: string; email: string; passwordHash: string }) {
+export async function adminCreateStateAccount(adminId: number, input: { name: string; email: string; passwordHash: string } & AdminProvisionedProfileFields) {
   const name = input.name.trim().slice(0, 100); const email = input.email.trim().toLowerCase();
   if (name.length < 2 || !email.includes("@")) throw new Error("Enter a state authority name and a valid email");
   if (await findUserByEmail(email)) throw new Error("An account with this email already exists");
-  const created = await db().insert(users).values({ publicId: createPublicUserId(), openId: `state-authority-${crypto.randomUUID()}`, name, email, passwordHash: input.passwordHash, loginMethod: "admin-provisioned", role: "state", lastSignedIn: new Date() });
+  const profileFields = sanitizeProfileFields(input);
+  const created = await db().insert(users).values({ publicId: createPublicUserId(), openId: `state-authority-${crypto.randomUUID()}`, name, email, passwordHash: input.passwordHash, loginMethod: "admin-provisioned", role: "state", lastSignedIn: new Date(), ...profileFields });
   const account = await findUserById(Number(created[0].insertId));
   if (!account) throw new Error("State authority account creation failed");
   await ensureUserAccountProfile(account.id);
-  await recordAdminAudit(adminId, "state_authority.account_created", "user", account.id, null, { id: account.id, publicId: account.publicId, email: account.email, role: account.role });
+  await recordAdminAudit(adminId, "state_authority.account_created", "user", account.id, null, { id: account.id, publicId: account.publicId, email: account.email, role: account.role, ...profileFields });
   return account;
 }
 
-export async function adminCreateDistrictAccount(adminId: number, input: { name: string; email: string; passwordHash: string }) {
+export async function adminCreateDistrictAccount(adminId: number, input: { name: string; email: string; passwordHash: string } & AdminProvisionedProfileFields) {
   const name = input.name.trim().slice(0, 100); const email = input.email.trim().toLowerCase();
   if (name.length < 2 || !email.includes("@")) throw new Error("Enter a district authority name and a valid email");
   if (await findUserByEmail(email)) throw new Error("An account with this email already exists");
-  const created = await db().insert(users).values({ publicId: createPublicUserId(), openId: `district-authority-${crypto.randomUUID()}`, name, email, passwordHash: input.passwordHash, loginMethod: "admin-provisioned", role: "district", lastSignedIn: new Date() });
+  const profileFields = sanitizeProfileFields(input);
+  const created = await db().insert(users).values({ publicId: createPublicUserId(), openId: `district-authority-${crypto.randomUUID()}`, name, email, passwordHash: input.passwordHash, loginMethod: "admin-provisioned", role: "district", lastSignedIn: new Date(), ...profileFields });
   const account = await findUserById(Number(created[0].insertId));
   if (!account) throw new Error("District authority account creation failed");
   await ensureUserAccountProfile(account.id);
-  await recordAdminAudit(adminId, "district_authority.account_created", "user", account.id, null, { id: account.id, publicId: account.publicId, email: account.email, role: account.role });
+  await recordAdminAudit(adminId, "district_authority.account_created", "user", account.id, null, { id: account.id, publicId: account.publicId, email: account.email, role: account.role, ...profileFields });
   return account;
 }
 
@@ -1551,19 +1578,20 @@ async function csrProfileForUser(userId: number) {
   return (await db().select().from(csrProfiles).where(eq(csrProfiles.userId, userId)).limit(1))[0];
 }
 
-export async function adminCreateCsrAccount(adminId: number, input: { name: string; email: string; passwordHash: string; profile: CsrProfileInput }) {
+export async function adminCreateCsrAccount(adminId: number, input: { name: string; email: string; passwordHash: string; profile: CsrProfileInput } & AdminProvisionedProfileFields) {
   const name = input.name.trim().slice(0, 100); const email = input.email.trim().toLowerCase();
   const companyName = input.profile.companyName.trim().slice(0, 180); const contactName = input.profile.contactName.trim().slice(0, 140); const contactEmail = input.profile.contactEmail.trim().toLowerCase();
   if (name.length < 2 || !email.includes("@") || companyName.length < 2 || contactName.length < 2 || !contactEmail.includes("@")) throw new Error("Complete the sponsor account, company, and contact details");
   if (await findUserByEmail(email)) throw new Error("An account with this email already exists");
-  const created = await db().insert(users).values({ publicId: createPublicUserId(), openId: `csr-${crypto.randomUUID()}`, name, email, passwordHash: input.passwordHash, loginMethod: "admin-provisioned", role: "csr", lastSignedIn: new Date() });
+  const profileFields = sanitizeProfileFields(input);
+  const created = await db().insert(users).values({ publicId: createPublicUserId(), openId: `csr-${crypto.randomUUID()}`, name, email, passwordHash: input.passwordHash, loginMethod: "admin-provisioned", role: "csr", lastSignedIn: new Date(), ...profileFields });
   const account = await findUserById(Number(created[0].insertId));
   if (!account) throw new Error("CSR account creation failed");
   await ensureUserAccountProfile(account.id);
   const profileInsert = await db().insert(csrProfiles).values({ userId: account.id, companyName, registrationNumber: input.profile.registrationNumber?.trim().slice(0, 120) || null, foundationName: input.profile.foundationName?.trim().slice(0, 180) || null, contactName, contactEmail, contactPhone: input.profile.contactPhone?.trim().slice(0, 40) || null, focusAreas: input.profile.focusAreas?.trim().slice(0, 2000) || null, active: true });
   const profile = (await db().select().from(csrProfiles).where(eq(csrProfiles.id, Number(profileInsert[0].insertId))).limit(1))[0];
   if (!profile) throw new Error("CSR company profile creation failed");
-  await recordAdminAudit(adminId, "csr.account_created", "csr_profile", profile.id, null, { account: { id: account.id, publicId: account.publicId, email: account.email, role: account.role }, profile });
+  await recordAdminAudit(adminId, "csr.account_created", "csr_profile", profile.id, null, { account: { id: account.id, publicId: account.publicId, email: account.email, role: account.role }, profile, ...profileFields });
   return { account, profile };
 }
 

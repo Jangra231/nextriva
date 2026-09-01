@@ -15,5 +15,6 @@ export function hasProfileAvatarSignature(bytes: Uint8Array, type: string) {
 }
 
 export function isProfileAvatarUrl(value: string, userId: number) {
-  return value.startsWith(`/manus-storage/profiles/avatars/${userId}/`);
+  return value.startsWith(`/manus-storage/profiles/avatars/${userId}/`) 
+    || value.startsWith('data:image/svg+xml');
 }

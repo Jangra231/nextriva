@@ -36,6 +36,12 @@ export const users = mysqlTable("users", {
   notificationPrefs: json("notificationPrefs").$type<{ email: boolean; push: boolean; sms: boolean }>(),
   profileCompleted: boolean("profileCompleted").default(false).notNull(),
   phoneVerified: boolean("phoneVerified").default(false).notNull(),
+  designation: varchar("designation", { length: 100 }),
+  department: varchar("department", { length: 100 }),
+  zone: varchar("zone", { length: 80 }),
+  ward: varchar("ward", { length: 80 }),
+  areaOfWork: varchar("areaOfWork", { length: 200 }),
+  notes: text("notes"),
 });
 
 export const otpVerifications = mysqlTable("otpVerifications", {

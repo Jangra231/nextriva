@@ -24,7 +24,7 @@ function buildEmojiAvatar(emoji: string, bg: string): string {
   const svg = [
     `<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256">`,
     `<rect width="256" height="256" fill="${bg}" rx="32"/>`,
-    `<text x="50%" y="50%" dy="0.05em" text-anchor="middle" font-size="120">${emoji}</text>`,
+    `<text x="50%" y="50%" text-anchor="middle" dominant-baseline="central" font-size="120">${emoji}</text>`,
     `</svg>`,
   ].join("");
   return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;

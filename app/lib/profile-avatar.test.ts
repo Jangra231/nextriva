@@ -16,4 +16,10 @@ describe("profile avatar validation", () => {
     expect(isProfileAvatarUrl("/manus-storage/profiles/avatars/42/avatar.png", 42)).toBe(true);
     expect(isProfileAvatarUrl("/manus-storage/profiles/avatars/41/avatar.png", 42)).toBe(false);
   });
+
+  it("accepts preset emoji avatar data URIs", () => {
+    const dataUri = 'data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3C%2Fsvg%3E';
+    expect(isProfileAvatarUrl(dataUri, 42)).toBe(true);
+    expect(isProfileAvatarUrl("data:image/svg+xml;base64,PHN2Zz48L3N2Zz4=", 42)).toBe(true);
+  });
 });

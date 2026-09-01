@@ -9,6 +9,7 @@ import { saveCapabilityApplicationAction, submitCapabilityApplicationAction } fr
 import { getCapabilityApplicantWorkspace } from "../../lib/db";
 import { currentUser } from "../../lib/auth";
 import { isCapabilityCatalogEnabled } from "../../lib/capability-feature";
+import { isAdministrator } from "../../lib/admin";
 
 const readable = (value: string) => value.replaceAll("_", " ");
 const dateValue = (value: Date | null) => value ? new Date(value).toISOString().slice(0, 10) : "";
@@ -16,6 +17,7 @@ const dateValue = (value: Date | null) => value ? new Date(value).toISOString().
 export default async function CapabilityApplicationsPage({ searchParams }: { searchParams: Promise<{ q?: string; audience?: string; functionType?: string; dataHandling?: string; dependencies?: string; sort?: string; decisionFilter?: string; apply?: string; edit?: string; error?: string; updated?: string }> }) {
   const user = await currentUser(); if (!user) return null;
   if (!isCapabilityCatalogEnabled()) redirect("/dashboard/my-bookings");
+  if (!isAdministrator(user)) redirect("/dashboard/my-bookings");
   const query = await searchParams; const decisionFilter = ["all", "unread", "approved", "returned", "rejected", "grant"].includes(query.decisionFilter || "") ? query.decisionFilter as "all" | "unread" | "approved" | "returned" | "rejected" | "grant" : "all"; const data = await getCapabilityApplicantWorkspace(user.id, { decisionNotificationFilter: decisionFilter }); const search = query.q?.trim().toLowerCase() || ""; const audience = query.audience?.trim().toLowerCase() || "";
   const functionType = query.functionType === "required" || query.functionType === "optional" ? query.functionType : ""; const dataHandling = query.dataHandling === "sensitive" || query.dataHandling === "standard" ? query.dataHandling : ""; const dependencies = query.dependencies === "with" || query.dependencies === "without" ? query.dependencies : ""; const sort = ["recommended", "name_asc", "name_desc", "most_functions", "sensitive_first"].includes(query.sort || "") ? query.sort || "recommended" : "recommended";
   const functionMatches = (fn: { isMandatory: boolean; handlesSensitiveData: boolean; dependencyCodes: string[] | null }) => (!functionType || (functionType === "required" ? fn.isMandatory : !fn.isMandatory)) && (!dataHandling || (dataHandling === "sensitive" ? fn.handlesSensitiveData : !fn.handlesSensitiveData)) && (!dependencies || (dependencies === "with" ? Boolean(fn.dependencyCodes?.length) : !fn.dependencyCodes?.length));

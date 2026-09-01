@@ -4,18 +4,12 @@ import { currentUser } from "../lib/auth";
 import { getUserAccountContext } from "../lib/db";
 import { generateInitialsAvatar } from "../lib/avatar";
 import { INTERESTS, EVENT_FORMATS, EVENT_FREQUENCIES } from "../lib/location-data";
-import OnboardingWizard from "./OnboardingWizard";
 import ProfileEditForm from "./ProfileEditForm";
 import ProfileSummaryChips from "./ProfileSummaryChips";
 
 export default async function AccountProfileWorkspace({ searchParams }: { searchParams: Promise<{ updated?: string; error?: string }> }) {
   const user = await currentUser();
   if (!user) return null;
-
-  /* New users who haven't completed onboarding see the wizard */
-  if (!user.profileCompleted) {
-    return <OnboardingWizard />;
-  }
 
   const accountContext = await getUserAccountContext(user.id);
   const { updated, error } = await searchParams;
