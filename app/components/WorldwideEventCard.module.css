@@ -1,0 +1,283 @@
+.worldwideEventCard {
+  position: relative;
+  min-width: 0;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  background: var(--surface);
+  box-shadow: 0 6px 18px rgba(20, 40, 29, 0.05);
+  overflow: hidden;
+  transition: transform 0.22s ease, border-color 0.22s ease, box-shadow 0.22s ease;
+}
+
+.worldwideEventCard:hover,
+.worldwideEventCard:focus-within {
+  transform: translateY(-4px);
+  border-color: rgba(22, 60, 48, 0.22);
+  box-shadow: 0 18px 36px rgba(20, 40, 29, 0.13);
+}
+
+.cardLink {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+  color: inherit;
+  text-decoration: none;
+}
+
+.cardLink:focus-visible {
+  outline: 3px solid var(--lime);
+  outline-offset: -3px;
+  border-radius: 20px;
+}
+
+.eventCover {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  background: var(--forest);
+}
+
+.eventCover img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+
+.worldwideEventCard:hover .eventCover img {
+  transform: scale(1.035);
+}
+
+.coverShade {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(10, 25, 20, 0.02) 38%, rgba(10, 25, 20, 0.56) 100%);
+  pointer-events: none;
+}
+
+.coverPlaceholder {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #193a32, #4d8977);
+  color: #fff;
+  font-size: 38px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.eventDateChip {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 52px;
+  padding: 7px 10px 6px;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.94);
+  color: var(--forest);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.16);
+}
+
+.eventDateDay {
+  font-size: 20px;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.eventDateMonth {
+  margin-top: 3px;
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.imageLabel {
+  position: absolute;
+  right: 14px;
+  bottom: 12px;
+  max-width: calc(100% - 86px);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.45);
+}
+
+.eventCardCopy {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  padding: 18px 18px 16px;
+  gap: 12px;
+}
+
+.eventMeta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-width: 0;
+}
+
+.categoryPill {
+  max-width: 72%;
+  padding: 5px 9px;
+  border-radius: 999px;
+  background: rgba(185, 224, 190, 0.35);
+  color: var(--forest);
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: capitalize;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.eventSource {
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: capitalize;
+  opacity: 0.8;
+}
+
+.eventCardCopy h3 {
+  margin: 0;
+  color: var(--ink);
+  font-size: 19px;
+  font-weight: 800;
+  line-height: 1.28;
+  letter-spacing: -0.35px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.eventDetails {
+  display: grid;
+  gap: 7px;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.35;
+}
+
+.eventDetails span {
+  display: flex;
+  align-items: flex-start;
+  gap: 7px;
+  min-width: 0;
+}
+
+.eventDetails svg {
+  flex: 0 0 auto;
+  margin-top: 1px;
+  color: var(--coral);
+}
+
+.eventDetails span:nth-child(2) svg {
+  color: var(--forest);
+}
+
+.cardFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: auto;
+  padding-top: 14px;
+  border-top: 1px solid #edf0e9;
+  font-size: 13px;
+}
+
+.priceInfo {
+  color: var(--ink);
+  font-weight: 800;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.priceInfo.free {
+  color: var(--forest);
+}
+
+.cardAction {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--coral);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.saveButton {
+  position: absolute;
+  z-index: 3;
+  top: 12px;
+  right: 12px;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.9);
+  color: var(--forest);
+  cursor: pointer;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.16);
+  transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+}
+
+.saveButton:hover,
+.saveButton:focus-visible {
+  background: #fff;
+  transform: scale(1.06);
+}
+
+.saveButton.saved {
+  color: #ef4444;
+  background: #fff;
+}
+
+@media (max-width: 520px) {
+  .eventCardCopy {
+    padding: 16px;
+  }
+
+  .eventCardCopy h3 {
+    font-size: 18px;
+  }
+
+  .cardAction {
+    font-size: 11px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .worldwideEventCard,
+  .eventCover img,
+  .saveButton {
+    transition: none;
+  }
+
+  .worldwideEventCard:hover,
+  .worldwideEventCard:focus-within,
+  .saveButton:hover,
+  .saveButton:focus-visible {
+    transform: none;
+  }
+}
