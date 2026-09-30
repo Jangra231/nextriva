@@ -1,4 +1,4 @@
-export const EVENT_SORT_VALUES = ["soonest", "latest", "recent"] as const;
+export const EVENT_SORT_VALUES = ["soonest", "latest", "recent", "popular"] as const;
 
 export type EventSort = (typeof EVENT_SORT_VALUES)[number];
 

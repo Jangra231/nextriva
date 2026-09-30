@@ -43,7 +43,7 @@ describe("Events Page Enhanced Discovery & Layout", () => {
 
   it("renders EventsHostBanner with organizer CTAs and trust features", () => {
     const html = renderToStaticMarkup(createElement(EventsHostBanner));
-    expect(html).toContain("Host your next event with Fitizen &amp; Nexriva");
+    expect(html).toContain("Host your next event with Nexriva");
     expect(html).toContain("For Creators &amp; Organizers");
     expect(html).toContain("MCD &amp; Local Authority Ready");
     expect(html).toContain("Verified Venue Approvals");

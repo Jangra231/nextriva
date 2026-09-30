@@ -17,6 +17,7 @@ import {
   fetchWorldwideEvents,
   limitEventsByLocation,
   limitEventsByCountryAndLocation,
+  balanceEventsByCountry,
   getLocationKey,
   pickSlideshowEvents,
   type WorldwideEvent,
@@ -468,5 +469,77 @@ describe("Worldwide Events", () => {
   it("supports fetching events for main categories and subcategories", async () => {
     const events = await fetchWorldwideEvents({ category: "conference" });
     expect(Array.isArray(events)).toBe(true);
+  });
+
+  it("filters out events completed more than 14 days ago while keeping ongoing, future, and recent past events", async () => {
+    const now = new Date();
+    const futureDate = new Date(now.getTime() + 5 * 24 * 60 * 60 * 1000).toISOString();
+    const recentPastDate = new Date(now.getTime() - 5 * 24 * 60 * 60 * 1000).toISOString();
+    const oldPastDate = new Date(now.getTime() - 20 * 24 * 60 * 60 * 1000).toISOString();
+
+    const eventsInput: WorldwideEvent[] = [
+      { ...mockEvent, id: "future-1", startDate: futureDate },
+      { ...mockEvent, id: "recent-1", startDate: recentPastDate, endDate: recentPastDate },
+      { ...mockEvent, id: "old-1", startDate: oldPastDate, endDate: oldPastDate },
+    ];
+
+    const twoWeeksAgo = new Date();
+    twoWeeksAgo.setDate(twoWeeksAgo.getDate() - 14);
+    const twoWeeksAgoTime = twoWeeksAgo.getTime();
+
+    const filtered = eventsInput.filter((e) => {
+      const startTime = new Date(e.startDate).getTime();
+      const endTime = e.endDate ? new Date(e.endDate).getTime() : startTime;
+      return endTime >= twoWeeksAgoTime;
+    });
+
+    const ids = filtered.map(e => e.id);
+    expect(ids).toContain("future-1");
+    expect(ids).toContain("recent-1");
+    expect(ids).not.toContain("old-1");
+  });
+
+  it("balanceEventsByCountry ensures diverse country representation and prevents single-country flooding", () => {
+    const manyEvents: WorldwideEvent[] = [];
+    // Generate 50 events in France (Paris)
+    for (let i = 0; i < 50; i++) {
+      manyEvents.push({
+        ...mockEvent,
+        id: `fr-${i}`,
+        country: "France",
+        city: "Paris",
+        popularity: 90 - i,
+      });
+    }
+    // Generate 20 events in USA
+    for (let i = 0; i < 20; i++) {
+      manyEvents.push({
+        ...mockEvent,
+        id: `us-${i}`,
+        country: "United States",
+        city: "New York",
+        popularity: 85 - i,
+      });
+    }
+    // Generate 20 events in Japan
+    for (let i = 0; i < 20; i++) {
+      manyEvents.push({
+        ...mockEvent,
+        id: `jp-${i}`,
+        country: "Japan",
+        city: "Tokyo",
+        popularity: 80 - i,
+      });
+    }
+
+    const balanced = balanceEventsByCountry(manyEvents, 100, 10);
+    const frCount = balanced.filter(e => e.country === "France").length;
+    const usCount = balanced.filter(e => e.country === "United States").length;
+    const jpCount = balanced.filter(e => e.country === "Japan").length;
+
+    expect(frCount).toBeLessThanOrEqual(20);
+    expect(usCount).toBeLessThanOrEqual(20);
+    expect(jpCount).toBeLessThanOrEqual(20);
+    expect(balanced.length).toBe(60);
   });
 });

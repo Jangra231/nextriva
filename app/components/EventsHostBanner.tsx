@@ -10,7 +10,7 @@ export default function EventsHostBanner() {
           <Sparkles size={13} aria-hidden="true" />
           <span>For Creators & Organizers</span>
         </div>
-        <h2>Host your next event with Fitizen & Nexriva</h2>
+        <h2>Host your next event with Nexriva</h2>
         <p>
           Publish sports events, runs, workshops, cultural gatherings, and conferences with automated ticketing, verified attendee QR check-ins, and zero payment headaches.
         </p>

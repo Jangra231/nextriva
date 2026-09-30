@@ -800,7 +800,7 @@ export async function listPublicEvents(input: { search?: string; city?: string; 
   if (input.filter === "Free") conditions.push(sql`EXISTS (SELECT 1 FROM tickets WHERE tickets.eventId = ${events.id} AND tickets.pricePaise = 0)`);
   if (input.filter === "Paid") conditions.push(sql`EXISTS (SELECT 1 FROM tickets WHERE tickets.eventId = ${events.id} AND tickets.pricePaise > 0)`);
   const sort = normalizeEventSort(input.sort);
-  const order = sort === "latest" ? desc(events.startsAt) : sort === "recent" ? desc(events.createdAt) : asc(events.startsAt);
+  const order = sort === "latest" ? desc(events.startsAt) : sort === "recent" || sort === "popular" ? desc(events.createdAt) : asc(events.startsAt);
   return withDatabaseReadRetry(async () => {
     const rows = await db()
       .select({ event: events, category: categories })

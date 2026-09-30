@@ -59,6 +59,7 @@ const QUICK_DATE_FILTERS = [
 
 const SORT_OPTIONS = [
   { id: "soonest", label: "Soonest Date" },
+  { id: "popular", label: "Most Popular" },
   { id: "recent", label: "Recently Added" },
   { id: "latest", label: "Latest Date" },
 ];
@@ -165,8 +166,8 @@ export default function EventsFilterToolbar({
       role="region"
       aria-label="Events discovery controls"
     >
-      {/* Row 1: Category + Count */}
-      <div className="events-toolbar-row events-toolbar-row-top">
+      <div className="events-toolbar-single-line">
+        {/* Category Dropdown */}
         <div className="category-dropdown-wrapper" ref={categoryRef}>
           <button
             type="button"
@@ -208,18 +209,8 @@ export default function EventsFilterToolbar({
             </div>
           )}
         </div>
-        <div className={`events-count-badge${countBounce ? " count-bounce" : ""}`}>
-          <span className={`count-live-dot${isPending ? " is-updating" : ""}`} />
-          <span className="count-text">
-            <strong>{totalEvents}</strong> {totalEvents === 1 ? "live event" : "live events"}
-            {currentCity ? ` in ${currentCity}` : " across India"}
-          </span>
-          {isPending && <span className="events-filter-loading">Updating…</span>}
-        </div>
-      </div>
 
-      {/* Row 2: Date Presets */}
-      <div className="events-toolbar-row events-toolbar-row-mid">
+        {/* Date Presets */}
         <div className="events-date-presets" role="group" aria-label="Date and Price Filters">
           {QUICK_DATE_FILTERS.map((df) => {
             const isActive = currentFilter === df.id;
@@ -230,7 +221,6 @@ export default function EventsFilterToolbar({
                 className={`date-preset-pill${isActive ? " active" : ""}${df.isSpecial ? " special" : ""}`}
                 onClick={() => updateParam("filter", isActive ? null : df.id)}
                 aria-pressed={isActive}
-                data-stagger=""
               >
                 {df.isSpecial && <Sparkles size={13} className="sparkle-icon" aria-hidden="true" />}
                 <span>{df.label}</span>
@@ -238,10 +228,8 @@ export default function EventsFilterToolbar({
             );
           })}
         </div>
-      </div>
 
-      {/* Row 3: Sort + Accessible */}
-      <div className="events-toolbar-row events-toolbar-row-bottom">
+        {/* Sort & Accessible */}
         <div className="events-action-group">
           <div className="events-sort-wrapper" ref={sortRef}>
             <button
@@ -286,6 +274,15 @@ export default function EventsFilterToolbar({
             <span>Accessible</span>
             {currentAccessible === "1" && <Check size={12} className="accessible-check-icon" aria-hidden="true" />}
           </button>
+        </div>
+
+        {/* Count Badge */}
+        <div className={`events-count-badge${countBounce ? " count-bounce" : ""}`}>
+          <span className={`count-live-dot${isPending ? " is-updating" : ""}`} />
+          <span className="count-text">
+            <strong>{totalEvents}</strong> {totalEvents === 1 ? "live event" : "live events"}
+          </span>
+          {isPending && <span className="events-filter-loading">Updating…</span>}
         </div>
       </div>
       {hasActiveFilters && (

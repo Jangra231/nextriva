@@ -2,6 +2,7 @@ import { Suspense } from "react";
 import Link from "next/link";
 import { Globe } from "lucide-react";
 import { fetchWorldwideEvents, pickSlideshowEvents, type WorldwideSearchParams } from "../lib/worldwide-events";
+import { balanceEventsByCountry } from "../lib/worldwide-diversity";
 import { SEED_WORLDWIDE_EVENTS } from "../lib/worldwide-seed-events";
 import SiteNav from "../components/SiteNav";
 import SiteFooter from "../components/SiteFooter";
@@ -38,7 +39,7 @@ async function WorldwideContent({ searchParams }: { searchParams: Promise<Worldw
     category: raw.category || undefined,
     sortBy: (raw.sort as WorldwideSearchParams["sortBy"]) || "popularity",
     page: raw.page ? Number(raw.page) : 1,
-    pageSize: 36,
+    pageSize: 100,
   };
 
   if (raw.date === "today") {
@@ -60,21 +61,42 @@ async function WorldwideContent({ searchParams }: { searchParams: Promise<Worldw
   }
 
   let events = await fetchWorldwideEvents(params);
+
+  // If live events are fewer than 100 and no specific provider filter was requested,
+  // supplement with diverse international seed events to ensure a full 100+ global events across different countries.
+  if (events.length < 100 && !raw.provider) {
+    const existingKeys = new Set(events.map(e => `${e.title.toLowerCase()}|${e.city.toLowerCase()}`));
+    const supplementary = SEED_WORLDWIDE_EVENTS.filter(e => {
+      const key = `${e.title.toLowerCase()}|${e.city.toLowerCase()}`;
+      return !existingKeys.has(key);
+    });
+    events = [...events, ...supplementary];
+  }
+
   if (events.length === 0) {
     events = SEED_WORLDWIDE_EVENTS;
-    if (params.query) {
-      const q = params.query.toLowerCase().trim();
-      events = events.filter(e => e.title.toLowerCase().includes(q) || (e.description && e.description.toLowerCase().includes(q)) || e.city.toLowerCase().includes(q));
-    }
-    if (params.city) {
-      const c = params.city.toLowerCase().trim();
-      events = events.filter(e => e.city.toLowerCase().includes(c));
-    }
-    if (params.category && params.category !== "all") {
-      const cat = params.category.toLowerCase().trim();
-      events = events.filter(e => (e.category || "").toLowerCase().includes(cat) || e.tags.some(t => t.toLowerCase().includes(cat)));
-    }
   }
+
+  if (params.query) {
+    const q = params.query.toLowerCase().trim();
+    events = events.filter(e => e.title.toLowerCase().includes(q) || (e.description && e.description.toLowerCase().includes(q)) || e.city.toLowerCase().includes(q) || e.country.toLowerCase().includes(q));
+  }
+  if (params.city) {
+    const c = params.city.toLowerCase().trim();
+    events = events.filter(e => e.city.toLowerCase().includes(c));
+  }
+  if (params.country) {
+    const co = params.country.toLowerCase().trim();
+    events = events.filter(e => e.country.toLowerCase().includes(co) || e.countryCode.toLowerCase() === co);
+  }
+  if (params.category && params.category !== "all") {
+    const cat = params.category.toLowerCase().trim();
+    events = events.filter(e => (e.category || "").toLowerCase().includes(cat) || e.tags.some(t => t.toLowerCase().includes(cat)));
+  }
+
+  const limit = params.pageSize ?? 100;
+  events = !params.country ? balanceEventsByCountry(events, limit, 2) : events.slice(0, limit);
+
   const carouselEvents = pickSlideshowEvents(events, 12);
 
   const hasFilters = Boolean(

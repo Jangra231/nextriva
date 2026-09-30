@@ -6,7 +6,7 @@
  */
 
 import type { WorldwideEvent, EventProvider, ProviderSearchParams } from "./worldwide-types";
-import { limitEventsByLocation, limitEventsByCountryAndLocation, getLocationKey, pickSlideshowEvents } from "./worldwide-diversity";
+import { limitEventsByLocation, limitEventsByCountryAndLocation, balanceEventsByCountry, getLocationKey, pickSlideshowEvents } from "./worldwide-diversity";
 import { getConfiguredProviders } from "./worldwide-providers";
 
 export * from "./worldwide-types";
@@ -36,6 +36,10 @@ function dedupeKey(event: WorldwideEvent): string {
  * Providers without credentials or network failures are gracefully handled.
  */
 export async function fetchWorldwideEvents(params: ProviderSearchParams = {}): Promise<WorldwideEvent[]> {
+  const queryParams: ProviderSearchParams = {
+    pageSize: 100,
+    ...params,
+  };
   let events: WorldwideEvent[] = [];
 
   try {
@@ -43,7 +47,7 @@ export async function fetchWorldwideEvents(params: ProviderSearchParams = {}): P
 
     const fetchPromise = Promise.allSettled(
       providers.map((p) =>
-        p.search(params).catch((err) => {
+        p.search(queryParams).catch((err) => {
           console.warn(`[worldwide-events] Provider ${p.name} failed:`, err instanceof Error ? err.message : err);
           return [] as WorldwideEvent[];
         })
@@ -75,8 +79,21 @@ export async function fetchWorldwideEvents(params: ProviderSearchParams = {}): P
     return true;
   });
 
+  // Filter out events completed more than 14 days ago, keeping ongoing and future events, 
+  // as well as those that finished within the last 14 days.
+  const twoWeeksAgo = new Date();
+  twoWeeksAgo.setDate(twoWeeksAgo.getDate() - 14);
+  const twoWeeksAgoTime = twoWeeksAgo.getTime();
+
+  const filteredByDate = unique.filter((e) => {
+    const startTime = new Date(e.startDate).getTime();
+    const endTime = e.endDate ? new Date(e.endDate).getTime() : startTime;
+    return endTime >= twoWeeksAgoTime;
+  });
+
   // Filter in-memory to ensure provider events honor query parameters
-  let filtered = unique;
+  let filtered = filteredByDate;
+
 
   if (params.query) {
     const q = params.query.toLowerCase().trim();
@@ -162,13 +179,14 @@ export async function fetchWorldwideEvents(params: ProviderSearchParams = {}): P
     return a.startDate.localeCompare(b.startDate);
   });
 
-  // Apply location/country diversity cap: when not searching for a specific city,
-  // ensure major countries get more representation (up to 6 events) and every other country has at least 3-4 famous events (up to 4 events).
-  if (!params.city) {
-    return limitEventsByCountryAndLocation(sorted);
-  }
+  const limit = params.pageSize ?? 100;
 
-  return sorted;
+  // If no specific country filter was requested, balance across different countries (max 10 per country)
+  // so results span multiple worldwide countries rather than being dominated by a single location.
+  const balanced = !params.country ? balanceEventsByCountry(sorted, limit, 2) : sorted;
+
+  // Return sorted/balanced events up to requested pageSize (default 100)
+  return balanced.slice(0, limit);
 }
 
 

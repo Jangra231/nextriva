@@ -153,7 +153,10 @@ export default function Interactive3DHero({
 
         {/* Popular Quick Filter Tags */}
         <div className="interactive-hero-quick-tags" aria-label="Popular search suggestions">
-          <span>Popular:</span>
+          <span className="hero-popular-label">
+            <Sparkles size={13} className="hero-popular-icon" aria-hidden="true" />
+            <span>Popular:</span>
+          </span>
           {QUICK_TAGS.map((tag) => (
             <button
               key={tag.query}
@@ -188,7 +191,7 @@ export default function Interactive3DHero({
           </div>
 
           <div className="interactive-hero-floating-badge badge-bottom-left">
-            <ShieldCheck size={13} color="#22c55e" aria-hidden="true" />
+            <ShieldCheck size={13} color="rgb(34, 197, 94)" aria-hidden="true" />
             <span>100% Verified Venues</span>
           </div>
 

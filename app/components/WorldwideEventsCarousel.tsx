@@ -7,9 +7,10 @@ import type { WorldwideEvent } from "../lib/worldwide-events";
 
 interface WorldwideEventsCarouselProps {
   events: WorldwideEvent[];
+  hideViewToggle?: boolean;
 }
 
-export default function WorldwideEventsCarousel({ events }: WorldwideEventsCarouselProps) {
+export default function WorldwideEventsCarousel({ events, hideViewToggle }: WorldwideEventsCarouselProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(true);
@@ -124,26 +125,28 @@ export default function WorldwideEventsCarousel({ events }: WorldwideEventsCarou
         </div>
 
         <div className="worldwide-carousel-controls-bar">
-          <div className="worldwide-carousel-view-toggle">
-            <button
-              type="button"
-              className={`worldwide-view-btn ${viewMode === "carousel" ? "active" : ""}`}
-              onClick={() => setViewMode("carousel")}
-              aria-label="Carousel view"
-            >
-              <SlidersHorizontal size={14} />
-              <span>Carousel</span>
-            </button>
-            <button
-              type="button"
-              className={`worldwide-view-btn ${viewMode === "grid" ? "active" : ""}`}
-              onClick={() => setViewMode("grid")}
-              aria-label="Grid view"
-            >
-              <LayoutGrid size={14} />
-              <span>Grid</span>
-            </button>
-          </div>
+          {!hideViewToggle && (
+            <div className="worldwide-carousel-view-toggle">
+              <button
+                type="button"
+                className={`worldwide-view-btn ${viewMode === "carousel" ? "active" : ""}`}
+                onClick={() => setViewMode("carousel")}
+                aria-label="Carousel view"
+              >
+                <SlidersHorizontal size={14} />
+                <span>Carousel</span>
+              </button>
+              <button
+                type="button"
+                className={`worldwide-view-btn ${viewMode === "grid" ? "active" : ""}`}
+                onClick={() => setViewMode("grid")}
+                aria-label="Grid view"
+              >
+                <LayoutGrid size={14} />
+                <span>Grid</span>
+              </button>
+            </div>
+          )}
 
           {viewMode === "carousel" && (
             <div className="worldwide-carousel-nav-group">

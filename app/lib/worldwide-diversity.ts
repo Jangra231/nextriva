@@ -61,6 +61,60 @@ export function limitEventsByCountryAndLocation(events: WorldwideEvent[]): World
 
   return result;
 }
+/**
+ * Balances events across countries so no single country dominates the results
+ * when browsing worldwide events, selecting events from diverse countries.
+ */
+export function balanceEventsByCountry(
+  events: WorldwideEvent[],
+  targetTotal = 100,
+  maxPerCountry = 10
+): WorldwideEvent[] {
+  const countByCountry = new Map<string, number>();
+  const countByLocation = new Map<string, number>();
+  const result: WorldwideEvent[] = [];
+
+  const sorted = [...events].sort((a, b) => {
+    if (b.popularity !== a.popularity) return b.popularity - a.popularity;
+    return a.startDate.localeCompare(b.startDate);
+  });
+
+  // Pass 1: Select events up to maxPerCountry per country and 3 per city
+  for (const ev of sorted) {
+    if (result.length >= targetTotal) break;
+    const country = (ev.country || ev.countryCode || "unknown").toLowerCase().trim();
+    const locKey = getLocationKey(ev);
+
+    const countryCount = countByCountry.get(country) ?? 0;
+    const locCount = countByLocation.get(locKey) ?? 0;
+
+    if (countryCount < maxPerCountry && locCount < 3) {
+      countByCountry.set(country, countryCount + 1);
+      countByLocation.set(locKey, locCount + 1);
+      result.push(ev);
+    }
+  }
+
+  // Pass 2: If we still need more events to fill targetTotal, allow up to maxPerCountry * 2 per country
+  if (result.length < targetTotal) {
+    const selectedIds = new Set(result.map((e) => e.id));
+    for (const ev of sorted) {
+      if (result.length >= targetTotal) break;
+      if (!selectedIds.has(ev.id)) {
+        const country = (ev.country || ev.countryCode || "unknown").toLowerCase().trim();
+        const countryCount = countByCountry.get(country) ?? 0;
+        if (countryCount < maxPerCountry * 2) {
+          countByCountry.set(country, countryCount + 1);
+          selectedIds.add(ev.id);
+          result.push(ev);
+        }
+      }
+    }
+  }
+
+  return result;
+}
+
 
 /**
  * Limits events so that no single location has more than maxPerLocation (default: 2) events.
